@@ -1,0 +1,18 @@
+{
+  "name": "ProAffy",
+  "short_name": "ProAffy",
+  "description": "HVAC growth partner. The ThermoGrowth Engine books more jobs for HVAC companies across the USA.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#6D28D9",
+  "icons": [
+    {
+      "src": "assets/images/logo.png",
+      "sizes": "3508x3508",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
