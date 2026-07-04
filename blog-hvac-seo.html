@@ -28,7 +28,11 @@
   <link rel="icon" type="image/png" href="assets/images/logo.png" />
   <link rel="apple-touch-icon" href="assets/images/logo.png" />
   <link rel="manifest" href="site.webmanifest" />
-  <link rel="stylesheet" href="assets/css/styles.css?v=8" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap">
+  <link rel="stylesheet" href="assets/css/styles.css?v=9" />
+  <script defer src="assets/js/main.js?v=3"></script>
 
   <!-- Organization + WebSite knowledge graph -->
   <script type="application/ld+json">
@@ -135,6 +139,7 @@
   </script>
 </head>
 <body>
+  <a href="#main" class="skip-link">Skip to content</a>
 
   <!-- ── Navigation ───────────────────────────────────── -->
   <header class="nav" role="banner">
@@ -169,7 +174,7 @@
     <a href="contact.html" class="btn btn--primary" data-i18n="nav.cta">Get Free Pilot</a>
   </nav>
 
-  <main>
+  <main id="main">
 
     <!-- ── Article Header ───────────────────────────────── -->
     <section class="section section--light article-header" aria-labelledby="article-heading">
@@ -352,6 +357,6 @@
     </svg>
   </button>
 
-  <script src="assets/js/main.js?v=3"></script>
+
 </body>
 </html>
