@@ -21,18 +21,18 @@
 ## Key pages
 
 - Home: https://proaffy.com/
-- Services: https://proaffy.com/services.html
-- About: https://proaffy.com/about.html
-- Contact / free pilot: https://proaffy.com/contact.html
-- Blog: https://proaffy.com/blog.html
+- Services: https://proaffy.com/services
+- About: https://proaffy.com/about
+- Contact / free pilot: https://proaffy.com/contact
+- Blog: https://proaffy.com/blog
 
 ## Blog articles
 
-- Why Every HVAC Company Needs a Real Digital Presence: https://proaffy.com/blog-hvac-digital-presence.html
-- How the ThermoGrowth Engine Books HVAC Companies More Jobs Every Month: https://proaffy.com/blog-thermogrowth-engine.html
-- Why Your HVAC Website Is Losing You Booked Jobs: https://proaffy.com/blog-hvac-websites.html
-- Local SEO for HVAC: How Homeowners Actually Find You: https://proaffy.com/blog-hvac-seo.html
-- GEO for HVAC: How to Get Your Company Recommended by ChatGPT: https://proaffy.com/blog-hvac-geo.html
+- Why Every HVAC Company Needs a Real Digital Presence: https://proaffy.com/blog-hvac-digital-presence
+- How the ThermoGrowth Engine Books HVAC Companies More Jobs Every Month: https://proaffy.com/blog-thermogrowth-engine
+- Why Your HVAC Website Is Losing You Booked Jobs: https://proaffy.com/blog-hvac-websites
+- Local SEO for HVAC: How Homeowners Actually Find You: https://proaffy.com/blog-hvac-seo
+- GEO for HVAC: How to Get Your Company Recommended by ChatGPT: https://proaffy.com/blog-hvac-geo
 
 ## Contact
 
