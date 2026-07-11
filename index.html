@@ -31,7 +31,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap">
-  <link rel="stylesheet" href="assets/css/styles.css?v=9" />
+  <link rel="stylesheet" href="assets/css/styles.css?v=10" />
   <script defer src="assets/js/main.js?v=3"></script>
 
   <!-- Organization + WebSite knowledge graph -->
@@ -214,7 +214,11 @@
             <span class="stat__label" data-i18n="stat2.label">Response time to every new lead, around the clock</span>
           </div>
           <div class="stat" role="listitem">
-            <span class="stat__num" data-i18n="stat3.num">15% to 7%</span>
+            <span class="stat__num stat__num--range" role="text" aria-label="From 15% down to 7%">
+              <span class="stat__range-num">15%</span>
+              <span class="stat__range-arrow" aria-hidden="true">&#8595;</span>
+              <span class="stat__range-num">7%</span>
+            </span>
             <span class="stat__label" data-i18n="stat3.label">No-show rate cut in half with automated reminders</span>
           </div>
         </div>
