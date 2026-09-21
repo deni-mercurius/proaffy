@@ -19,6 +19,14 @@ from html.parser import HTMLParser
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SITE_HOST = "proaffy.com"
 
+# Regions written by _tools/chrome.py. Shared on purpose.
+CHROME_MARKERS = [
+    ("<!-- chrome:nav -->", "<!-- /chrome:nav -->"),
+    ("<!-- chrome:footer -->", "<!-- /chrome:footer -->"),
+    ("<!-- chrome:assets -->", "<!-- /chrome:assets -->"),
+    ("<!-- chrome:cta -->", "<!-- /chrome:cta -->"),
+]
+
 findings = []
 results = []
 
@@ -443,11 +451,21 @@ def run():
                 p.append(f"{name}: {m.group(0)!r} performs the insight. {why}")
     check(11, "no performed insight", p)
 
-    # 12 - no sentence shared between pages
+    # 12 - no sentence shared between pages.
+    # Generated chrome is excluded, because it is shared by definition and its
+    # per-page fields are asserted unique by check 20 instead. This check is
+    # about authored prose: a button label repeating is a UI decision, the same
+    # paragraph on seven pages is a tell.
     p = []
     seen = {}
     for name, pg in pages.items():
-        for s in sentences(pg.main_text()):
+        stripped = pg.raw
+        for open_m, close_m in CHROME_MARKERS:
+            while open_m in stripped and close_m in stripped:
+                a = stripped.index(open_m)
+                b = stripped.index(close_m) + len(close_m)
+                stripped = stripped[:a] + stripped[b:]
+        for s in sentences(Page(name, stripped).main_text()):
             seen.setdefault(s, []).append(name)
     for s, where in sorted(seen.items(), key=lambda kv: -len(set(kv[1]))):
         uniq = sorted(set(where))
@@ -456,7 +474,7 @@ def run():
                      f"{'...' if len(uniq) > 3 else ''}): {s[:70]}...")
         elif len(where) > 1:
             p.append(f"{len(where)} times on {uniq[0]}: {s[:70]}...")
-    check(12, "no sentence of 9+ words repeats across pages", p, pending="S3")
+    check(12, "no sentence of 9+ words repeats across pages", p)
 
     # 13 - motion lint
     p = []
@@ -623,7 +641,63 @@ def run():
                              "matches the template; run python _tools/chrome.py")
     except Exception as exc:  # noqa: BLE001
         p.append(f"could not check the chrome: {exc}")
+        # The closing block is shared markup with a per-page voice. If two
+        # pages ever close on the same line, the duplication has simply moved
+        # from the HTML into the template.
+        heads, subs = {}, {}
+        for name, (heading, sub) in chrome.CTA.items():
+            heads.setdefault(heading, []).append(name)
+            subs.setdefault(sub, []).append(name)
+        for label, group in list(heads.items()) + list(subs.items()):
+            if len(group) > 1:
+                p.append(f"the closing block is identical on {', '.join(group)}: "
+                         f"{label[:50]}...")
     check(20, "repeated chrome matches its template", p)
+
+    # 21 - the FAQ structured data says what the page says
+    p = []
+    unesc = __import__("html").unescape
+    for name, pg in pages.items():
+        shown = [(unesc(re.sub(r"<[^>]+>", "", q)).strip(),
+                  unesc(re.sub(r"<[^>]+>", "", a)).strip())
+                 for q, a in re.findall(
+                     r"<summary>(.*?)</summary>\s*<[^>]*class=\"faq__answer\"[^>]*>(.*?)</",
+                     pg.raw, re.S)]
+        shown = [(re.sub(r"\s+", " ", q), re.sub(r"\s+", " ", a)) for q, a in shown]
+
+        marked = []
+        for raw in pg.ld:
+            try:
+                data = json.loads(raw)
+            except json.JSONDecodeError:
+                continue
+            if data.get("@type") != "FAQPage":
+                continue
+            for item in data.get("mainEntity", []):
+                marked.append((
+                    re.sub(r"\s+", " ", item.get("name", "")).strip(),
+                    re.sub(r"\s+", " ",
+                           item.get("acceptedAnswer", {}).get("text", "")).strip(),
+                ))
+
+        if not shown and not marked:
+            continue
+        if bool(shown) != bool(marked):
+            p.append(f"{name}: {len(shown)} questions on the page, "
+                     f"{len(marked)} in the structured data")
+            continue
+        if len(shown) != len(marked):
+            p.append(f"{name}: {len(shown)} visible questions but "
+                     f"{len(marked)} marked up")
+            continue
+        for (vq, va), (mq, ma) in zip(shown, marked):
+            if vq != mq:
+                p.append(f"{name}: marked-up question differs from the page: "
+                         f"{mq[:52]!r}")
+            elif va != ma:
+                p.append(f"{name}: the answer to {vq[:38]!r} differs between "
+                         "the page and its structured data")
+    check(21, "FAQ structured data matches the visible questions", p)
 
     return pages
 

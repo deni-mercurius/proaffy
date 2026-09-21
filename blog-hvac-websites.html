@@ -32,8 +32,8 @@
   <link rel="preload" as="font" type="font/woff2" href="assets/fonts/ibm-plex-sans-400.woff2" crossorigin />
   <link rel="preload" as="font" type="font/woff2" href="assets/fonts/ibm-plex-sans-600.woff2" crossorigin />
   <link rel="stylesheet" href="assets/css/fonts.css?v=4044ff39" />
-  <link rel="stylesheet" href="assets/css/styles.css?v=266c2c11" />
-  <script defer src="assets/js/main.js?v=8e6f6867"></script>
+  <link rel="stylesheet" href="assets/css/styles.css?v=0842dee2" />
+  <script defer src="assets/js/main.js?v=b54115e2"></script>
   <!-- /chrome:assets -->
 
   <!-- Organization + WebSite knowledge graph -->
@@ -286,7 +286,7 @@
             <div class="article__cta">
               <h2 class="article__cta-heading">Want a website that actually books jobs?</h2>
               <p class="article__cta-body">
-                Let us show you what a conversion-first HVAC website looks like, and how it plugs into a system that responds to every lead in seconds. It starts with a free pilot, before you spend a dollar.
+                Let us show you what a conversion-first HVAC website looks like, and how it plugs into a system that responds to every lead in seconds. The pilot runs on your live enquiries first, so you see it working before anything is agreed.
               </p>
               <a href="/contact" class="btn btn--primary">Get Your Free Pilot</a>
             </div>
@@ -320,41 +320,43 @@
     </section>
 
     <!-- ── Email CTA ─────────────────────────────────────── -->
-    <section class="cta-email" aria-labelledby="cta-heading">
-      <div class="cta-email__content">
-        <h2 class="cta-email__heading" id="cta-heading">See It In Action</h2>
-        <p class="cta-email__sub">
-          Let us install the ThermoGrowth Engine in your business for free and watch the jobs roll in.
-        </p>
-        <div class="form-sent" id="sent" role="status">
-          <p class="form-sent__title">Thank you. Your message reached us.</p>
-          <p>We reply within one business day. If it is urgent, email
-            <a href="mailto:info@proaffy.com">info@proaffy.com</a>.</p>
-        </div>
+    <!-- chrome:cta -->
+  <section class="cta-email" aria-labelledby="cta-heading">
+    <div class="cta-email__content">
+      <h2 class="cta-email__heading" id="cta-heading">A faster site still needs a faster reply</h2>
+      <p class="cta-email__sub">We answer what your site collects, at any hour, without you reaching for the phone.</p>
 
-        <form class="cta-email__form" id="ctaEmailForm"
-              action="https://api.web3forms.com/submit" method="POST">
-              <input type="hidden" name="access_key" value="5da7b2bb-24b2-42ad-96ac-7228dd4ce8d6" />
-              <input type="hidden" name="subject" value="Free pilot request from the site footer" />
-              <input type="hidden" name="redirect" value="https://proaffy.com/blog-hvac-websites?sent=1#sent" />
-              <input type="checkbox" name="botcheck" class="hp" tabindex="-1"
-                     autocomplete="off" aria-hidden="true" />
-          <input
-            type="email"
-            name="email"
-            class="cta-email__input"
-            placeholder="Email Address..."
-            aria-label="Email address"
-            required
-          />
-          <button type="submit" class="btn btn--filled">Book Your Free Pilot</button>
-        </form>
-        <p class="cta-email__contact">
-          <span>Or email us directly:</span>
-          <a href="mailto:info@proaffy.com">info@proaffy.com</a>
-        </p>
+      <div class="form-sent" id="sent" role="status">
+        <p class="form-sent__title">Thank you. Your message reached us.</p>
+        <p>We reply within one business day. If it is urgent, email
+          <a href="mailto:info@proaffy.com">info@proaffy.com</a>.</p>
       </div>
-    </section>
+
+      <form class="cta-email__form" id="ctaEmailForm"
+            action="https://api.web3forms.com/submit" method="POST">
+        <input type="hidden" name="access_key" value="5da7b2bb-24b2-42ad-96ac-7228dd4ce8d6" />
+        <input type="hidden" name="subject" value="Free pilot request from proaffy.com" />
+        <input type="hidden" name="redirect" value="https://proaffy.com/blog-hvac-websites?sent=1#sent" />
+        <input type="checkbox" name="botcheck" class="hp" tabindex="-1"
+               autocomplete="off" aria-hidden="true" />
+        <input
+          type="email"
+          name="email"
+          class="cta-email__input"
+          placeholder="Email Address..."
+          aria-label="Email address"
+          required
+        />
+        <button type="submit" class="btn btn--filled">Book Your Free Pilot</button>
+      </form>
+
+      <p class="cta-email__contact">
+        <span>Or email us directly:</span>
+        <a href="mailto:info@proaffy.com">info@proaffy.com</a>
+      </p>
+    </div>
+  </section>
+  <!-- /chrome:cta -->
 
   </main>
 

@@ -32,8 +32,8 @@
   <link rel="preload" as="font" type="font/woff2" href="assets/fonts/ibm-plex-sans-400.woff2" crossorigin />
   <link rel="preload" as="font" type="font/woff2" href="assets/fonts/ibm-plex-sans-600.woff2" crossorigin />
   <link rel="stylesheet" href="assets/css/fonts.css?v=4044ff39" />
-  <link rel="stylesheet" href="assets/css/styles.css?v=266c2c11" />
-  <script defer src="assets/js/main.js?v=8e6f6867"></script>
+  <link rel="stylesheet" href="assets/css/styles.css?v=0842dee2" />
+  <script defer src="assets/js/main.js?v=b54115e2"></script>
   <!-- /chrome:assets -->
 
   <!-- Organization + WebSite knowledge graph -->
@@ -245,7 +245,7 @@
               The price of a weak digital presence is invisible, which is exactly what makes it dangerous. You never see the homeowner who searched, wasn't impressed, and quietly called someone else. You just feel it as a slower month with no obvious cause.
             </p>
             <p>
-              Add up the missed searches, the referrals that didn't convert, and the leads that came in but were never followed up on, and the average HVAC company is bleeding around <strong>$3,477 a month</strong> in jobs that should have been booked. Meanwhile, a whole generation of younger homeowners simply won't call a company they can't find and vet online first. To them, no digital presence doesn't mean "small local business." It means "I'm not sure these people are real."
+              Harvard Business Review audited 2,241 companies and found <strong>23% never answered a web enquiry at all</strong>, while the average reply took 42 hours in jobs that should have been booked. Meanwhile, a whole generation of younger homeowners simply won't call a company they can't find and vet online first. To them, no digital presence doesn't mean "small local business." It means "I'm not sure these people are real."
             </p>
 
             <h2>The Pillars of a Digital Presence That Books Jobs</h2>
@@ -331,41 +331,43 @@
     </section>
 
     <!-- ── Email CTA ─────────────────────────────────────── -->
-    <section class="cta-email" aria-labelledby="cta-heading">
-      <div class="cta-email__content">
-        <h2 class="cta-email__heading" id="cta-heading">See It In Action</h2>
-        <p class="cta-email__sub">
-          Let us install the ThermoGrowth Engine in your business for free and watch the jobs roll in.
-        </p>
-        <div class="form-sent" id="sent" role="status">
-          <p class="form-sent__title">Thank you. Your message reached us.</p>
-          <p>We reply within one business day. If it is urgent, email
-            <a href="mailto:info@proaffy.com">info@proaffy.com</a>.</p>
-        </div>
+    <!-- chrome:cta -->
+  <section class="cta-email" aria-labelledby="cta-heading">
+    <div class="cta-email__content">
+      <h2 class="cta-email__heading" id="cta-heading">Being easy to find is where it starts</h2>
+      <p class="cta-email__sub">Being quick to answer is where the job actually gets booked.</p>
 
-        <form class="cta-email__form" id="ctaEmailForm"
-              action="https://api.web3forms.com/submit" method="POST">
-              <input type="hidden" name="access_key" value="5da7b2bb-24b2-42ad-96ac-7228dd4ce8d6" />
-              <input type="hidden" name="subject" value="Free pilot request from the site footer" />
-              <input type="hidden" name="redirect" value="https://proaffy.com/blog-hvac-digital-presence?sent=1#sent" />
-              <input type="checkbox" name="botcheck" class="hp" tabindex="-1"
-                     autocomplete="off" aria-hidden="true" />
-          <input
-            type="email"
-            name="email"
-            class="cta-email__input"
-            placeholder="Email Address..."
-            aria-label="Email address"
-            required
-          />
-          <button type="submit" class="btn btn--filled">Book Your Free Pilot</button>
-        </form>
-        <p class="cta-email__contact">
-          <span>Or email us directly:</span>
-          <a href="mailto:info@proaffy.com">info@proaffy.com</a>
-        </p>
+      <div class="form-sent" id="sent" role="status">
+        <p class="form-sent__title">Thank you. Your message reached us.</p>
+        <p>We reply within one business day. If it is urgent, email
+          <a href="mailto:info@proaffy.com">info@proaffy.com</a>.</p>
       </div>
-    </section>
+
+      <form class="cta-email__form" id="ctaEmailForm"
+            action="https://api.web3forms.com/submit" method="POST">
+        <input type="hidden" name="access_key" value="5da7b2bb-24b2-42ad-96ac-7228dd4ce8d6" />
+        <input type="hidden" name="subject" value="Free pilot request from proaffy.com" />
+        <input type="hidden" name="redirect" value="https://proaffy.com/blog-hvac-digital-presence?sent=1#sent" />
+        <input type="checkbox" name="botcheck" class="hp" tabindex="-1"
+               autocomplete="off" aria-hidden="true" />
+        <input
+          type="email"
+          name="email"
+          class="cta-email__input"
+          placeholder="Email Address..."
+          aria-label="Email address"
+          required
+        />
+        <button type="submit" class="btn btn--filled">Book Your Free Pilot</button>
+      </form>
+
+      <p class="cta-email__contact">
+        <span>Or email us directly:</span>
+        <a href="mailto:info@proaffy.com">info@proaffy.com</a>
+      </p>
+    </div>
+  </section>
+  <!-- /chrome:cta -->
 
   </main>
 

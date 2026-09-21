@@ -30,8 +30,8 @@
   <link rel="preload" as="font" type="font/woff2" href="assets/fonts/ibm-plex-sans-400.woff2" crossorigin />
   <link rel="preload" as="font" type="font/woff2" href="assets/fonts/ibm-plex-sans-600.woff2" crossorigin />
   <link rel="stylesheet" href="assets/css/fonts.css?v=4044ff39" />
-  <link rel="stylesheet" href="assets/css/styles.css?v=266c2c11" />
-  <script defer src="assets/js/main.js?v=8e6f6867"></script>
+  <link rel="stylesheet" href="assets/css/styles.css?v=0842dee2" />
+  <script defer src="assets/js/main.js?v=b54115e2"></script>
   <!-- /chrome:assets -->
 
   <!-- Organization + WebSite knowledge graph -->
@@ -97,7 +97,7 @@
         "provider": { "@id": "https://proaffy.com/#organization" },
         "areaServed": { "@type": "Country", "name": "United States" },
         "url": "https://proaffy.com/services",
-        "description": "A done-for-you system that responds to every HVAC lead within 60 seconds, follows up until they book, and fills your calendar with qualified jobs. Guaranteed or you don't pay."
+        "description": "A done-for-you system that responds to every HVAC lead within 60 seconds, follows up until they book or say no, and puts the qualified ones in your calendar."
       },
       {
         "@type": "Service",
@@ -239,7 +239,7 @@
           <div>
             <span class="section-label">The ThermoGrowth Engine</span>
             <p class="service-featured__vph">
-              We help HVAC companies generate 11 new booked jobs per month (worth an extra $23,000 in revenue), and recover $3,477 in monthly losses from cold leads.
+              We answer every enquiry you receive in under 60 seconds, keep following up until it books or stops, and work the old leads already sitting in your inbox.
             </p>
             <a href="/contact" class="btn btn--primary">Get Your Free Pilot</a>
             <a href="/blog-thermogrowth-engine" class="feature-card__link link-block">How the ThermoGrowth Engine books more jobs</a>
@@ -262,7 +262,7 @@
             <div class="service-featured__step">
               <span class="service-featured__step-num" aria-hidden="true">03</span>
               <p class="service-featured__step-body">
-                It sends automated reminders to cut your no-show rate from 15% to 7%, assigns jobs to the right technician, and follows up for reviews, all on autopilot.
+                It sends reminders before the slot so fewer appointments evaporate, assigns the job to the right technician, and asks for a review afterwards.
               </p>
             </div>
           </div>
@@ -384,41 +384,43 @@
     </section>
 
     <!-- ── Email CTA ─────────────────────────────────────── -->
-    <section class="cta-email" aria-labelledby="cta-heading">
-      <div class="cta-email__content">
-        <h2 class="cta-email__heading" id="cta-heading">See It In Action</h2>
-        <p class="cta-email__sub">
-          Let us install the ThermoGrowth Engine in your business for free and watch the jobs roll in.
-        </p>
-        <div class="form-sent" id="sent" role="status">
-          <p class="form-sent__title">Thank you. Your message reached us.</p>
-          <p>We reply within one business day. If it is urgent, email
-            <a href="mailto:info@proaffy.com">info@proaffy.com</a>.</p>
-        </div>
+    <!-- chrome:cta -->
+  <section class="cta-email" aria-labelledby="cta-heading">
+    <div class="cta-email__content">
+      <h2 class="cta-email__heading" id="cta-heading">Start with the part that is costing you most</h2>
+      <p class="cta-email__sub">Tell us where jobs are slipping and we will run that piece first.</p>
 
-        <form class="cta-email__form" id="ctaEmailForm"
-              action="https://api.web3forms.com/submit" method="POST">
-              <input type="hidden" name="access_key" value="5da7b2bb-24b2-42ad-96ac-7228dd4ce8d6" />
-              <input type="hidden" name="subject" value="Free pilot request from the site footer" />
-              <input type="hidden" name="redirect" value="https://proaffy.com/services?sent=1#sent" />
-              <input type="checkbox" name="botcheck" class="hp" tabindex="-1"
-                     autocomplete="off" aria-hidden="true" />
-          <input
-            type="email"
-            name="email"
-            class="cta-email__input"
-            placeholder="Email Address..."
-            aria-label="Email address"
-            required
-          />
-          <button type="submit" class="btn btn--filled">Book Your Free Pilot</button>
-        </form>
-        <p class="cta-email__contact">
-          <span>Or email us directly:</span>
-          <a href="mailto:info@proaffy.com">info@proaffy.com</a>
-        </p>
+      <div class="form-sent" id="sent" role="status">
+        <p class="form-sent__title">Thank you. Your message reached us.</p>
+        <p>We reply within one business day. If it is urgent, email
+          <a href="mailto:info@proaffy.com">info@proaffy.com</a>.</p>
       </div>
-    </section>
+
+      <form class="cta-email__form" id="ctaEmailForm"
+            action="https://api.web3forms.com/submit" method="POST">
+        <input type="hidden" name="access_key" value="5da7b2bb-24b2-42ad-96ac-7228dd4ce8d6" />
+        <input type="hidden" name="subject" value="Free pilot request from proaffy.com" />
+        <input type="hidden" name="redirect" value="https://proaffy.com/services?sent=1#sent" />
+        <input type="checkbox" name="botcheck" class="hp" tabindex="-1"
+               autocomplete="off" aria-hidden="true" />
+        <input
+          type="email"
+          name="email"
+          class="cta-email__input"
+          placeholder="Email Address..."
+          aria-label="Email address"
+          required
+        />
+        <button type="submit" class="btn btn--filled">Book Your Free Pilot</button>
+      </form>
+
+      <p class="cta-email__contact">
+        <span>Or email us directly:</span>
+        <a href="mailto:info@proaffy.com">info@proaffy.com</a>
+      </p>
+    </div>
+  </section>
+  <!-- /chrome:cta -->
 
   </main>
 

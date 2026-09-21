@@ -414,23 +414,6 @@ input, textarea, select { font-family: inherit; font-size: inherit; }
   flex-wrap: wrap;
   margin-top: var(--sp-10);
 }
-
-.guarantee-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--sp-2);
-  margin-top: var(--sp-6);
-  padding: var(--sp-2) var(--sp-5);
-  border: 1px solid var(--rule);
-  border-radius: var(--radius-pill);
-  font-family: var(--font-accent);
-  font-size: var(--fs-xs);
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--text-2);
-}
-
 /* ── Marquee ─────────────────────────────────────────────── */
 .marquee-wrap {
   overflow: hidden;
@@ -441,47 +424,9 @@ input, textarea, select { font-family: inherit; font-size: inherit; }
   border-bottom: 1px solid var(--clr-border-dark);
 }
 
-.marquee-wrap--hero {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: var(--ink);
-  border-color: var(--rule-ink);
-  padding-block: var(--sp-6);
-  z-index: 1;
-}
 
-.marquee-wrap:hover .marquee-track,
-.marquee-wrap:focus-within .marquee-track { animation-play-state: paused; }
 
-.marquee-track {
-  display: flex;
-  width: max-content;
-  animation: marquee 30s linear infinite;
-}
-.marquee-track__item {
-  font-family: var(--font-display);
-  font-size: clamp(var(--fs-lg), 2.5vw, var(--fs-2xl));
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--text-on-ink);
-  white-space: nowrap;
-  padding-right: var(--sp-12);
-  display: flex;
-  align-items: center;
-  gap: var(--sp-6);
-}
-.marquee-track__item .sep {
-  color: var(--clr-accent);
-  font-size: 0.65em;
-}
 
-@keyframes marquee {
-  from { transform: translateX(0); }
-  to   { transform: translateX(-50%); }
-}
 
 /* ── Problem Section ─────────────────────────────────────── */
 .problem-lede {
@@ -490,42 +435,12 @@ input, textarea, select { font-family: inherit; font-size: inherit; }
   line-height: 1.75;
   max-width: 68ch;
 }
-
-.problem-close {
-  font-family: var(--font-accent);
-  font-size: clamp(var(--fs-xl), 3vw, var(--fs-2xl));
-  font-weight: 600;
-  color: var(--clr-text);
-  margin-top: var(--sp-8);
-}
-
 /* 3 stats in a row */
 .stats-row {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: var(--sp-6);
   margin-top: var(--sp-12);
-}
-
-.stat {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: var(--sp-8) var(--sp-6);
-  border: 1px solid var(--clr-border);
-  border-radius: var(--radius-lg);
-  text-align: center;
-  background: var(--clr-bg-alt);
-}
-
-.stat__num {
-  display: block;
-  font-family: var(--font-accent);
-  font-size: clamp(var(--fs-3xl), 5vw, var(--fs-4xl));
-  font-weight: 600;
-  color: var(--clr-accent);
-  line-height: 1;
-  margin-bottom: var(--sp-3);
 }
 
 /* Before/after range stat: two mirrored figures with a connector */
@@ -536,19 +451,7 @@ input, textarea, select { font-family: inherit; font-size: inherit; }
   gap: 0.06em;
   line-height: 1.04;
 }
-.stat__range-num { display: block; }
-.stat__range-arrow {
-  font-size: 0.42em;
-  font-weight: 600;
-  color: var(--clr-primary);
-  line-height: 1;
-}
 
-.stat__label {
-  font-size: var(--fs-sm);
-  color: var(--clr-text-muted);
-  line-height: 1.45;
-}
 
 /* ── Services Grid ───────────────────────────────────────── */
 .services-grid {
@@ -704,47 +607,9 @@ input, textarea, select { font-family: inherit; font-size: inherit; }
   max-width: 600px;
 }
 
-.features-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: var(--sp-6);
-  margin-top: var(--sp-12);
-}
 
-.feature-card {
-  background: var(--clr-bg);
-  border: 1px solid var(--clr-border);
-  border-radius: var(--radius-lg);
-  padding: var(--sp-8);
-  transition: box-shadow var(--dur-base) var(--ease), transform var(--dur-base) var(--ease);
-}
 
-.feature-card:hover {
-}
 
-.feature-card__icon {
-  font-family: var(--font-accent);
-  font-size: var(--fs-2xl);
-  font-weight: 600;
-  color: var(--clr-accent);
-  display: block;
-  margin-bottom: var(--sp-5);
-  line-height: 1;
-}
-
-.feature-card__title {
-  font-family: var(--font-accent);
-  font-size: var(--fs-lg);
-  font-weight: 600;
-  color: var(--clr-text);
-  margin-bottom: var(--sp-3);
-}
-
-.feature-card__body {
-  font-size: var(--fs-base);
-  color: var(--clr-text-muted);
-  line-height: 1.65;
-}
 
 /* ── How It Works - Steps ────────────────────────────────── */
 .steps-header {
@@ -752,55 +617,11 @@ input, textarea, select { font-family: inherit; font-size: inherit; }
   margin-bottom: var(--sp-12);
 }
 
-.steps-header .h2 { color: var(--clr-text-on-dark); }
-.steps-header .section-intro { color: var(--clr-text-muted-dark); }
 
-.steps-list { border-top: 1px solid var(--clr-border-dark); }
 
-.step {
-  display: grid;
-  grid-template-columns: 4rem 1fr;
-  gap: var(--sp-8);
-  padding-block: var(--sp-10);
-  border-bottom: 1px solid var(--clr-border-dark);
-  align-items: start;
-}
 
-.step__num {
-  font-family: var(--font-accent);
-  font-size: var(--fs-3xl);
-  font-weight: 600;
-  color: var(--clr-accent);
-  line-height: 1;
-  padding-top: var(--sp-1);
-}
 
-.step__title {
-  font-family: var(--font-accent);
-  font-size: clamp(var(--fs-lg), 2.5vw, var(--fs-xl));
-  font-weight: 600;
-  color: var(--clr-text-on-dark);
-  margin-bottom: var(--sp-3);
-}
 
-.step__body {
-  font-size: var(--fs-base);
-  color: var(--clr-text-muted-dark);
-  line-height: 1.7;
-}
-
-.result-callout {
-  margin-top: var(--sp-12);
-  padding: var(--sp-8) var(--sp-10);
-  border-left: 3px solid var(--clr-accent);
-  background: rgba(59,130,246,0.08);
-  border-radius: 0 var(--radius-md) var(--radius-md) 0;
-  font-family: var(--font-accent);
-  font-size: clamp(var(--fs-md), 2vw, var(--fs-lg));
-  font-weight: 500;
-  color: var(--clr-text-on-dark);
-  line-height: 1.6;
-}
 
 /* ── Who This Is For ─────────────────────────────────────── */
 .who-section {
@@ -836,15 +657,6 @@ input, textarea, select { font-family: inherit; font-size: inherit; }
 
 .section--dark .checklist__item { color: var(--clr-text-on-dark); }
 .section--dark .checklist__item::before { color: var(--clr-accent); }
-
-.who-close {
-  font-size: var(--fs-md);
-  font-style: italic;
-  color: var(--clr-text-muted);
-  margin-top: var(--sp-6);
-  line-height: 1.55;
-}
-
 /* ── Email CTA ───────────────────────────────────────────── */
 .cta-email {
   position: relative;
@@ -1503,7 +1315,6 @@ input, textarea, select { font-family: inherit; font-size: inherit; }
    had thought to tell it about. */
 .section--dark,
 .cta-email,
-.marquee-wrap,
 .service-featured,
 .about-built {
   --clr-accent:       var(--copper-400);
@@ -1529,16 +1340,6 @@ input, textarea, select { font-family: inherit; font-size: inherit; }
 
   html { scroll-behavior: auto; }
 
-  .marquee-track {
-    animation: none;
-    width: auto;
-    transform: none;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-  /* The track holds the phrases twice so the loop can seam. Without motion the
-     duplicate set is just the same words written again. */
-  .marquee-track__item:nth-child(n+5) { display: none; }
 }
 
 /* ── Small classes that replaced inline styles ───────────── */
@@ -1568,3 +1369,187 @@ input, textarea, select { font-family: inherit; font-size: inherit; }
 .mt-8  { margin-top: var(--sp-8); }
 .mt-10 { margin-top: var(--sp-10); }
 .mb-6  { margin-bottom: var(--sp-6); }
+
+/* ══ IDIOM 1: the ledger row ══════════════════════════════
+   Rows separated by a hairline. No card, no radius, no shadow, no fill. It is
+   the shape of a parts list, an invoice, a spec sheet: a contractor reads a
+   dozen a week and trusts them on sight. Rows are deliberately unequal in
+   height, because the copy in them is unequal in length. This replaced six
+   perfect rectangles, every one of which was a fixed repeat(). */
+.ledger {
+  list-style: none;
+  border-top: 1px solid var(--clr-border);
+  margin-top: var(--sp-8);
+}
+.ledger__row {
+  display: grid;
+  grid-template-columns: 6rem minmax(0, 1fr) minmax(0, 14rem);
+  gap: var(--sp-6);
+  align-items: baseline;
+  padding-block: var(--sp-6);
+  border-bottom: 1px solid var(--clr-border);
+}
+.ledger__index {
+  font-family: var(--font-mono);
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  color: var(--clr-accent);
+  font-variant-numeric: tabular-nums lining-nums;
+}
+.ledger__title {
+  font-size: var(--fs-md);
+  line-height: 1.55;
+  max-width: 62ch;
+}
+.ledger__title strong { font-weight: 600; }
+.ledger__title a { text-decoration: underline; text-underline-offset: 3px; }
+.ledger__note {
+  display: block;
+  margin-top: var(--sp-2);
+  font-size: var(--fs-sm);
+  color: var(--clr-text-muted);
+}
+.ledger__figure { justify-self: end; text-align: right; }
+
+/* The time column is wider and the figure column is not needed. */
+.ledger--time .ledger__row { grid-template-columns: 6rem minmax(0, 1fr); }
+.ledger--outcomes .ledger__index { color: var(--clr-text-muted); }
+
+@media (max-width: 640px) {
+  .ledger__row { grid-template-columns: 1fr; gap: var(--sp-3); }
+  .ledger__figure { justify-self: start; text-align: left; }
+}
+
+/* ══ IDIOM 2: the asymmetric split ════════════════════════
+   A narrow claim column against a wide evidence column. Never 1fr 1fr. This is
+   the generalisation of the one asymmetry the old site already had. */
+.split {
+  display: grid;
+  grid-template-columns: minmax(0, 27rem) minmax(0, 1fr);
+  gap: var(--sp-16);
+  align-items: start;
+}
+.split--hero { align-items: center; gap: var(--sp-24); }
+.split__claim { min-width: 0; }
+.split__evidence { min-width: 0; }
+
+@media (max-width: 960px) {
+  .split { grid-template-columns: 1fr; gap: var(--sp-10); }
+  .split--hero { gap: var(--sp-10); }
+}
+
+/* ══ IDIOM 3: the measured figure ═════════════════════════
+   A mono numeral, a rule directly under it exactly as wide as the numeral, and
+   a caption. The rule is the honesty mechanism and it is one CSS property:
+   solid means measured, dashed means projected from the inputs above. Legible
+   without reading the legend. */
+.figure { margin: 0; width: max-content; max-width: 100%; }
+.figure__num {
+  font-family: var(--font-mono);
+  font-size: clamp(var(--fs-3xl), 8vw, var(--fs-5xl));
+  font-weight: 500;
+  line-height: 1;
+  color: var(--clr-accent);
+  font-variant-numeric: tabular-nums lining-nums;
+  width: max-content;
+  padding-bottom: var(--sp-2);
+  border-bottom: 2px solid var(--clr-accent);
+}
+.figure__num--projected { border-bottom-style: dashed; }
+.figure__num--inline {
+  display: block;
+  font-size: var(--fs-2xl);
+  border-bottom-width: 2px;
+}
+.figure__caption {
+  margin-top: var(--sp-4);
+  font-size: var(--fs-sm);
+  color: var(--clr-text-muted);
+  max-width: 30ch;
+  line-height: 1.6;
+}
+
+/* ══ The model ════════════════════════════════════════════ */
+.model__input {
+  font-family: var(--font-mono);
+  font-size: var(--fs-lg);
+  font-weight: 500;
+  font-variant-numeric: tabular-nums lining-nums;
+  width: 7ch;
+  text-align: right;
+  color: var(--clr-text);
+  background: transparent;
+  border: 0;
+  border-bottom: 2px solid var(--clr-accent);
+  padding-bottom: var(--sp-1);
+}
+.model__prefix {
+  font-family: var(--font-mono);
+  font-size: var(--fs-lg);
+  color: var(--clr-text-muted);
+}
+.model__question {
+  margin-top: var(--sp-10);
+  font-size: var(--fs-md);
+  max-width: 62ch;
+  line-height: 1.6;
+}
+.ledger__row--derived .ledger__title { font-weight: 600; }
+
+.legend {
+  margin-top: var(--sp-8);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-6);
+  font-size: var(--fs-sm);
+  color: var(--clr-text-muted);
+}
+.legend__key { display: inline-flex; align-items: center; gap: var(--sp-2); }
+.legend__rule {
+  display: inline-block;
+  width: 28px;
+  border-bottom: 2px solid var(--clr-accent);
+}
+.legend__rule--projected { border-bottom-style: dashed; }
+
+/* ══ Prose and sourcing ═══════════════════════════════════ */
+.prose p { margin-bottom: var(--sp-5); max-width: 68ch; line-height: 1.7; }
+.prose p:last-child { margin-bottom: 0; }
+.source {
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  line-height: 1.7;
+  color: var(--clr-text-muted);
+  border-left: 2px solid var(--clr-border);
+  padding-left: var(--sp-4);
+}
+.source cite { font-style: italic; }
+
+.sequence__leaks {
+  margin-top: var(--sp-10);
+  max-width: 68ch;
+  line-height: 1.7;
+  color: var(--clr-text-muted);
+}
+
+.link-under { text-decoration: underline; text-underline-offset: 3px; color: var(--clr-accent); }
+
+/* The projected outcomes are the least certain figures on the page, so they do
+   not get to be the largest. The measured row above them stays bigger, which is
+   the same argument the solid and dashed rules make, in size. */
+.ledger--outcomes .figure__num { font-size: var(--fs-2xl); }
+.ledger--outcomes .ledger__row { grid-template-columns: 6rem minmax(0, 1fr) minmax(0, 16rem); }
+
+/* The currency mark and its field are one unit, not two things that collide. */
+.ledger__figure {
+  display: inline-flex;
+  align-items: baseline;
+  justify-content: flex-end;
+  gap: var(--sp-1);
+}
+/* Spinners overlap a right-aligned figure and a ledger is typed, not stepped. */
+.model__input::-webkit-outer-spin-button,
+.model__input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.model__input { appearance: textfield; -moz-appearance: textfield; }
+.model__input:focus-visible { outline-offset: 4px; }

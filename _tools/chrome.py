@@ -1,12 +1,14 @@
 """Regenerate the repeated chrome across every page. Stdlib only.
 
 The site has no build step and the pages are hand-written, so three regions were
-hand-duplicated across 13 files. This owns exactly those three and nothing else:
+hand-duplicated across 13 files. This owns exactly those, and nothing else:
 
   nav     a one-parameter template. Every nav is 31 identical lines except for a
           single ` active` token on one link. None is a valid argument: 404,
           privacy and terms legitimately have no active state.
   footer  a literal constant, byte-identical everywhere, zero parameters.
+  cta     the closing block, on the seven pages that carry one. Per-page heading
+          and line, because it used to be identical on all seven.
   assets  the 8-line block in <head> that every page shares. The rest of each
           head is per-page SEO copy and is deliberately NOT owned here. Owning
           titles, canonicals and JSON-LD would be a content pipeline, not a
@@ -26,6 +28,7 @@ import os
 import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+KEY = "5da7b2bb-24b2-42ad-96ac-7228dd4ce8d6"
 
 # Which nav link is marked active on which page. A page absent from this map
 # gets no active link, which is correct for 404, privacy and terms.
@@ -120,10 +123,91 @@ def assets_block(css_v, js_v, fonts_v):
   <script defer src="assets/js/main.js?v={js_v}"></script>"""
 
 
+# The closing block used to be byte-identical on seven pages, so seven pages
+# ended on the same sentence. It is generated now, and every page closes on a
+# line that belongs to it. Gate check 12 fails the build if two pages ever
+# share a sentence again.
+CTA = {
+    "index.html": (
+        "See it run on your own leads",
+        "We set it up, run it for a month, and you decide afterwards whether it "
+        "was worth paying for.",
+    ),
+    "services.html": (
+        "Start with the part that is costing you most",
+        "Tell us where jobs are slipping and we will run that piece first.",
+    ),
+    "blog-thermogrowth-engine.html": (
+        "Watch it answer a real enquiry",
+        "Send one through and we will show you the reply it gets, with the "
+        "timestamps.",
+    ),
+    "blog-hvac-seo.html": (
+        "Ranking gets you the call",
+        "Answering it before the next company does is the part we handle.",
+    ),
+    "blog-hvac-geo.html": (
+        "Being recommended is the first half",
+        "Once an assistant points a homeowner at you, the reply still has to "
+        "arrive in seconds.",
+    ),
+    "blog-hvac-websites.html": (
+        "A faster site still needs a faster reply",
+        "We answer what your site collects, at any hour, without you reaching "
+        "for the phone.",
+    ),
+    "blog-hvac-digital-presence.html": (
+        "Being easy to find is where it starts",
+        "Being quick to answer is where the job actually gets booked.",
+    ),
+}
+
+
+def cta_block(name):
+    heading, sub = CTA[name]
+    slug = "/" if name == "index.html" else "/" + name[:-5]
+    return f"""  <section class="cta-email" aria-labelledby="cta-heading">
+    <div class="cta-email__content">
+      <h2 class="cta-email__heading" id="cta-heading">{heading}</h2>
+      <p class="cta-email__sub">{sub}</p>
+
+      <div class="form-sent" id="sent" role="status">
+        <p class="form-sent__title">Thank you. Your message reached us.</p>
+        <p>We reply within one business day. If it is urgent, email
+          <a href="mailto:info@proaffy.com">info@proaffy.com</a>.</p>
+      </div>
+
+      <form class="cta-email__form" id="ctaEmailForm"
+            action="https://api.web3forms.com/submit" method="POST">
+        <input type="hidden" name="access_key" value="{KEY}" />
+        <input type="hidden" name="subject" value="Free pilot request from proaffy.com" />
+        <input type="hidden" name="redirect" value="https://proaffy.com{slug}?sent=1#sent" />
+        <input type="checkbox" name="botcheck" class="hp" tabindex="-1"
+               autocomplete="off" aria-hidden="true" />
+        <input
+          type="email"
+          name="email"
+          class="cta-email__input"
+          placeholder="Email Address..."
+          aria-label="Email address"
+          required
+        />
+        <button type="submit" class="btn btn--filled">Book Your Free Pilot</button>
+      </form>
+
+      <p class="cta-email__contact">
+        <span>Or email us directly:</span>
+        <a href="mailto:info@proaffy.com">info@proaffy.com</a>
+      </p>
+    </div>
+  </section>"""
+
+
 MARKERS = {
     "nav": ("  <!-- chrome:nav -->", "  <!-- /chrome:nav -->"),
     "footer": ("  <!-- chrome:footer -->", "  <!-- /chrome:footer -->"),
     "assets": ("  <!-- chrome:assets -->", "  <!-- /chrome:assets -->"),
+    "cta": ("  <!-- chrome:cta -->", "  <!-- /chrome:cta -->"),
 }
 
 
@@ -157,6 +241,13 @@ def find_region(text, region):
             return None
         end = text.find("</footer>", start)
         return (start, end + len("</footer>")) if end != -1 else None
+
+    if region == "cta":
+        start = text.find('  <section class="cta-email"')
+        if start == -1:
+            return None
+        end = text.find("</section>", start)
+        return (start, end + len("</section>")) if end != -1 else None
 
     if region == "assets":
         start = text.find('  <link rel="icon"')
@@ -204,8 +295,15 @@ def main():
         src = io.open(path, encoding="utf-8").read()
         out = src
 
-        for region in ("nav", "footer", "assets"):
-            body = nav_block(ACTIVE.get(name)) if region == "nav" else bodies[region]
+        for region in ("nav", "footer", "assets", "cta"):
+            if region == "cta" and name not in CTA:
+                continue
+            if region == "nav":
+                body = nav_block(ACTIVE.get(name))
+            elif region == "cta":
+                body = cta_block(name)
+            else:
+                body = bodies[region]
             result = apply_region(out, region, body)
             if result is None:
                 problems.append(f"{name}: could not locate the {region} region")
