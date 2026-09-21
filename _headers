@@ -11,6 +11,12 @@
 #
 # No hashes for the JSON-LD blocks: a script whose type is not a JavaScript
 # MIME type is a data block and is not subject to script-src.
+#
+# cloudflareinsights.com is in script-src and connect-src because the host
+# injects its analytics beacon into every response AFTER the HTML leaves this
+# repo. Nothing here references it, so it is invisible locally: the first
+# strict policy blocked it and silently stopped analytics collecting. Found by
+# loading the deployed pages in a browser, not by reading this file.
 
 /*
   X-Content-Type-Options: nosniff
@@ -18,7 +24,7 @@
   X-Frame-Options: DENY
   Permissions-Policy: camera=(), microphone=(), geolocation=(), interest-cohort=()
   Strict-Transport-Security: max-age=15552000
-  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; form-action 'self' https://api.web3forms.com; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; upgrade-insecure-requests
+  Content-Security-Policy: default-src 'self'; script-src 'self' https://static.cloudflareinsights.com; connect-src 'self' https://cloudflareinsights.com; style-src 'self'; img-src 'self' data:; font-src 'self'; form-action 'self' https://api.web3forms.com; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; upgrade-insecure-requests
 
 # Immutable, because these are versioned by a query string in the markup:
 # a change ships as a new URL, so a returning visitor never needs to revalidate.
