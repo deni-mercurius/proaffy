@@ -1,0 +1,5 @@
+# Git stores LF. Keep the working copy LF too, so a checkout on another
+# machine cannot turn a one-line change into a whole-file diff.
+* text=auto eol=lf
+*.png binary
+*.woff2 binary

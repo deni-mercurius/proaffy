@@ -1,0 +1,14 @@
+# Working notes. Never committed, never published.
+_notes/
+
+# Python
+__pycache__/
+*.py[cod]
+
+# Editor and OS
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+desktop.ini

@@ -133,8 +133,6 @@ input, textarea, select { font-family: inherit; font-size: inherit; }
 .section--alt   { background: var(--clr-bg-alt); color: var(--clr-text); }
 .section--dark  { background: var(--clr-dark); color: var(--clr-text-on-dark); }
 
-.page-hero-offset { padding-top: calc(var(--nav-height) + var(--sp-16)); }
-
 /* ── Section Label ───────────────────────────────────────── */
 /* THE THERMOGROWTH ENGINE etc - Orbitron, small caps */
 .section-label {
@@ -422,8 +420,6 @@ input, textarea, select { font-family: inherit; font-size: inherit; }
   width: max-content;
   animation: marquee 30s linear infinite;
 }
-.marquee-track--reverse { animation-direction: reverse; }
-
 .marquee-track__item {
   font-family: var(--font-display);
   font-size: clamp(var(--fs-lg), 2.5vw, var(--fs-2xl));
@@ -1065,6 +1061,10 @@ input, textarea, select { font-family: inherit; font-size: inherit; }
   margin-top: var(--sp-2);
   line-height: 1.5;
 }
+/* Status colour lives here, not in main.js, so the palette has one home. */
+.form__status--ok  { color: var(--clr-accent); }
+.form__status--err { color: #ef4444; }
+.form__status a    { color: inherit; text-decoration: underline; }
 
 /* ── Blog Index ──────────────────────────────────────────── */
 .blog-grid {
@@ -1143,19 +1143,6 @@ input, textarea, select { font-family: inherit; font-size: inherit; }
   padding-top: calc(var(--nav-height) + var(--sp-16));
   padding-bottom: var(--sp-12);
 }
-
-.article__back {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--sp-2);
-  font-family: var(--font-accent);
-  font-size: var(--fs-sm);
-  font-weight: 600;
-  color: var(--clr-text-muted);
-  margin-bottom: var(--sp-8);
-  transition: color var(--dur-base) var(--ease);
-}
-.article__back:hover { color: var(--clr-primary); }
 
 .article-header .h1 { margin-top: var(--sp-4); max-width: 22ch; }
 
@@ -1386,29 +1373,6 @@ input, textarea, select { font-family: inherit; font-size: inherit; }
   transition: color var(--dur-base) var(--ease);
 }
 .footer__email-addr:hover { color: #fff; }
-
-/* ── Floating Chat Button ────────────────────────────────── */
-.chat-btn {
-  position: fixed;
-  bottom: var(--sp-6);
-  right: var(--sp-6);
-  z-index: 99;
-  width: 52px;
-  height: 52px;
-  border-radius: 50%;
-  background: var(--clr-primary);
-  color: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  box-shadow: 0 4px 20px rgba(109,40,217,0.4);
-  transition: transform var(--dur-base) var(--ease), box-shadow var(--dur-base) var(--ease);
-}
-.chat-btn:hover {
-  transform: scale(1.08);
-  box-shadow: 0 6px 28px rgba(109,40,217,0.6);
-}
 
 /* ── Mobile Nav ──────────────────────────────────────────── */
 .nav__mobile-menu {

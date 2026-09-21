@@ -1,4 +1,6 @@
 wrangler.jsonc
 .assetsignore
+.gitignore
 server.py
-iconnobackground (1) (2).png
+_tools/
+_notes/

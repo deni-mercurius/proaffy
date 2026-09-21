@@ -1,0 +1,548 @@
+"""ProAffy site gate. Read-only, stdlib only.
+
+Every check is numbered and prints PASS or FAIL with the reason. Exit 1 on any
+failure. Some checks are expected to fail today: that is deliberate. A gate
+proved against real defects is worth more than one written after they are fixed.
+
+Copy checks read the text inside <main> only. Nav, footer and head are
+byte-identical across pages, so including them would make the duplicate-sentence
+check fire on every page at once and hide the real duplicates.
+
+Run:  python _tools/verify.py
+"""
+import json
+import os
+import re
+import sys
+from html.parser import HTMLParser
+
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+SITE_HOST = "proaffy.com"
+
+findings = []
+results = []
+
+
+def check(num, title, problems, pending=None):
+    """Record one numbered check.
+
+    `pending` names the session that fixes a defect we already know about. A
+    pending check that fails reports PEND and does not break the build. A
+    pending check that PASSES breaks the build, so the marker cannot outlive
+    the defect and quietly turn into a disabled check.
+    """
+    results.append((num, title, list(problems), pending))
+
+
+# ─────────────────────────────────────────────────────────────
+# Patterns, and the samples that prove they still match.
+# A regex that silently matches nothing is worse than no regex,
+# so every pattern is exercised before the site is scanned.
+# ─────────────────────────────────────────────────────────────
+
+PERFORMED = [
+    (r"\bworth (?:noting|spotting|knowing|saying|having)\b",
+     "cut it, or say the thing itself"),
+    (r"\bthat is the [a-z ]{0,26}worth\b",
+     "the sentence before it already made the point"),
+    (r"\b(?:is|are) (?:rarely|not) the problem\b",
+     "state what IS the problem and drop the reversal"),
+    (r"\bthe tell is\b",
+     "name the signal without announcing that it is one"),
+    (r"\bwhich is the (?:whole|only|real) (?:reason|point|thing)\b",
+     "if it is the whole reason, the sentence can just say so"),
+    (r"\bit is not [a-z]+\.\s+it is\b",
+     "the corrective reversal, used for rhythm rather than for clarity"),
+    (r"\bis not [a-z]+, it is\b",
+     "same reversal, one comma shorter"),
+    (r"\bthat is (?:the point|the difference|the whole)\b",
+     "let the reader reach it"),
+]
+
+PERFORMED_BAD = [
+    "and that is worth noting here",
+    "that is the moment worth spotting",
+    "the price is not the problem",
+    "the tell is the spacing",
+    "which is the whole reason we built it",
+    "it is not slow. it is broken",
+    "speed is not luck, it is process",
+    "that is the difference",
+]
+
+PERFORMED_GOOD = [
+    "we answer every lead in under a minute",
+    "the furnace failed on the coldest night of the year",
+    "a booked appointment that no-shows costs you a truck roll",
+]
+
+# Built with chr() rather than escape sequences, and rather than the characters
+# themselves. An escape can be mangled in transit by a shell heredoc, and the
+# literal character would put an em dash inside the file that bans em dashes.
+BANNED_CHARS = [
+    (chr(0x2014), "em dash"),
+    (chr(0x2013), "en dash"),
+]
+
+EMOJI = re.compile(
+    "["
+    + chr(0x1F300) + "-" + chr(0x1FAFF)
+    + chr(0x2600) + "-" + chr(0x27BF)
+    + chr(0x1F1E6) + "-" + chr(0x1F1FF)
+    + chr(0x2B00) + "-" + chr(0x2BFF)
+    + "]"
+)
+CONTROL = re.compile(r"[\x00-\x08\x0b\x0c\x0e-\x1f]")
+# Case-sensitive and uppercase-only on purpose. A lowercase match would fire on
+# every placeholder="..." attribute in the markup, which is ordinary HTML.
+PLACEHOLDER = re.compile(r"[A-Z0-9_]*PLACEHOLDER[A-Z0-9_]*|REPLACE_ME|YOUR_KEY_HERE|TODO_KEY")
+
+
+def prove_patterns():
+    """Exit 2 if any pattern has gone blind. This runs before anything else."""
+    blind = []
+    for pat, _why in PERFORMED:
+        rx = re.compile(pat, re.I)
+        if not any(rx.search(s) for s in PERFORMED_BAD):
+            blind.append(f"performed-insight pattern matches no known-bad sample: {pat}")
+        for good in PERFORMED_GOOD:
+            if rx.search(good):
+                blind.append(f"performed-insight pattern fires on clean copy: {pat} -> {good!r}")
+
+    if not EMOJI.search("ship it \U0001F680"):
+        blind.append("emoji pattern matches no emoji")
+    if EMOJI.search("plain ascii text"):
+        blind.append("emoji pattern fires on plain text")
+    if not CONTROL.search("bad\x08byte"):
+        blind.append("control-character pattern matches no control character")
+    if CONTROL.search("clean text\n\twith tabs"):
+        blind.append("control-character pattern fires on tab or newline")
+    if not PLACEHOLDER.search("WEB3FORMS_ACCESS_KEY_PLACEHOLDER"):
+        blind.append("placeholder pattern matches no placeholder")
+    if PLACEHOLDER.search('<input placeholder="Email Address...">'):
+        blind.append("placeholder pattern fires on an ordinary HTML placeholder attribute")
+
+    if blind:
+        print("GATE BROKEN. Patterns cannot be trusted:\n")
+        for b in blind:
+            print("  " + b)
+        print("\nFix the patterns before trusting any result below.")
+        sys.exit(2)
+
+
+# ─────────────────────────────────────────────────────────────
+# Parsing
+# ─────────────────────────────────────────────────────────────
+
+VOID = {"area", "base", "br", "col", "embed", "hr", "img", "input",
+        "link", "meta", "param", "source", "track", "wbr"}
+SKIP_TEXT = {"script", "style"}
+
+
+class Page(HTMLParser):
+    def __init__(self, name, raw):
+        super().__init__(convert_charrefs=True)
+        self.name = name
+        self.raw = raw
+        self.title = None
+        self.description = None
+        self.headings = []        # (level, text)
+        self.ids = []
+        self.idrefs = []          # (kind, value)
+        self.imgs = []            # dict of attrs
+        self.requests = []        # (tag, url)
+        self.inline_styles = 0
+        self.ld = []              # raw json strings
+        self.canonical = None
+
+        self._stack = []
+        self._text = []           # text inside <main>
+        self._in_main = 0
+        self._grab = None         # buffer for title / heading / ld+json
+        self._grab_kind = None
+        self.feed(raw)
+
+    # -- helpers ------------------------------------------------
+    def _attr(self, attrs, key):
+        for k, v in attrs:
+            if k == key:
+                return v
+        return None
+
+    def handle_starttag(self, tag, attrs):
+        a = dict(attrs)
+
+        if tag not in VOID:
+            self._stack.append(tag)
+        if tag == "main":
+            self._in_main += 1
+
+        if "id" in a and a["id"]:
+            self.ids.append(a["id"])
+        if "style" in a:
+            self.inline_styles += 1
+
+        for key in ("for", "aria-labelledby", "aria-describedby", "aria-controls"):
+            if key in a and a[key]:
+                for ref in a[key].split():
+                    self.idrefs.append((key, ref))
+
+        if tag == "title":
+            self._grab, self._grab_kind = [], "title"
+        elif tag in ("h1", "h2", "h3", "h4", "h5", "h6"):
+            self._grab, self._grab_kind = [], tag
+        elif tag == "script" and a.get("type") == "application/ld+json":
+            self._grab, self._grab_kind = [], "ld"
+
+        if tag == "meta" and a.get("name") == "description":
+            self.description = a.get("content")
+
+        if tag == "link":
+            rel = (a.get("rel") or "").lower()
+            href = a.get("href")
+            if href:
+                if "canonical" in rel:
+                    self.canonical = href
+                else:
+                    self.requests.append(("link", href))
+        elif tag == "script" and a.get("src"):
+            self.requests.append(("script", a["src"]))
+        elif tag == "img":
+            self.imgs.append(a)
+            if a.get("src"):
+                self.requests.append(("img", a["src"]))
+        elif tag == "a" and a.get("href"):
+            self.requests.append(("a", a["href"]))
+
+    def handle_endtag(self, tag):
+        if tag == "main" and self._in_main:
+            self._in_main -= 1
+        while self._stack and self._stack[-1] != tag:
+            self._stack.pop()
+        if self._stack:
+            self._stack.pop()
+
+        if self._grab is not None:
+            text = "".join(self._grab).strip()
+            if self._grab_kind == "title":
+                self.title = text
+            elif self._grab_kind == "ld":
+                self.ld.append(text)
+            elif self._grab_kind and self._grab_kind.startswith("h"):
+                self.headings.append((int(self._grab_kind[1]), text))
+            self._grab, self._grab_kind = None, None
+
+    def handle_data(self, data):
+        if self._grab is not None:
+            self._grab.append(data)
+        cur = self._stack[-1] if self._stack else None
+        if self._in_main and cur not in SKIP_TEXT:
+            self._text.append(data)
+
+    def main_text(self):
+        return re.sub(r"\s+", " ", "".join(self._text)).strip()
+
+
+def load_pages():
+    pages = {}
+    for fn in sorted(os.listdir(ROOT)):
+        if fn.endswith(".html"):
+            with open(os.path.join(ROOT, fn), encoding="utf-8") as fh:
+                pages[fn] = Page(fn, fh.read())
+    return pages
+
+
+def resolves(url):
+    """Does an internal URL point at a real file? Mirrors the host's clean URLs."""
+    if url.startswith(("http://", "https://", "mailto:", "tel:", "#", "data:")):
+        return True
+    path = url.split("#")[0].split("?")[0]
+    if not path or path == "/":
+        return os.path.isfile(os.path.join(ROOT, "index.html"))
+    rel = path.lstrip("/")
+    full = os.path.join(ROOT, rel.replace("/", os.sep))
+    return os.path.isfile(full) or os.path.isfile(full + ".html")
+
+
+def sentences(text):
+    out = []
+    for raw in re.split(r"(?<=[.!?])\s+", text):
+        s = raw.strip()
+        if len(s.split()) >= 9:
+            out.append(s)
+    return out
+
+
+# ─────────────────────────────────────────────────────────────
+# Checks
+# ─────────────────────────────────────────────────────────────
+
+def run():
+    pages = load_pages()
+    css_path = os.path.join(ROOT, "assets", "css", "styles.css")
+    css = open(css_path, encoding="utf-8").read() if os.path.isfile(css_path) else ""
+    js_dir = os.path.join(ROOT, "assets", "js")
+    js = ""
+    if os.path.isdir(js_dir):
+        for fn in sorted(os.listdir(js_dir)):
+            if fn.endswith(".js"):
+                js += open(os.path.join(js_dir, fn), encoding="utf-8").read()
+
+    # 1 - title and description shape
+    p = []
+    for name, pg in pages.items():
+        if not pg.title:
+            p.append(f"{name}: no <title>")
+        elif not 20 <= len(pg.title) <= 65:
+            p.append(f"{name}: title is {len(pg.title)} chars, want 20-65")
+        if not pg.description:
+            p.append(f"{name}: no meta description")
+        elif not 70 <= len(pg.description) <= 170:
+            p.append(f"{name}: description is {len(pg.description)} chars, want 70-170")
+    check(1, "title 20-65 chars, description 70-170", p, pending="S4")
+
+    # 2 - titles and descriptions unique
+    p = []
+    for field in ("title", "description"):
+        seen = {}
+        for name, pg in pages.items():
+            val = getattr(pg, field)
+            if val:
+                seen.setdefault(val, []).append(name)
+        for val, where in seen.items():
+            if len(where) > 1:
+                p.append(f"{field} repeated on {', '.join(where)}: {val[:60]}...")
+    check(2, "titles and descriptions unique", p)
+
+    # 3 - one h1, no skipped heading levels
+    p = []
+    for name, pg in pages.items():
+        h1s = [t for lvl, t in pg.headings if lvl == 1]
+        if len(h1s) != 1:
+            p.append(f"{name}: {len(h1s)} h1 elements, want exactly 1")
+        prev = 0
+        for lvl, text in pg.headings:
+            if prev and lvl > prev + 1:
+                p.append(f"{name}: h{prev} jumps to h{lvl} at {text[:40]!r}")
+            prev = lvl
+    check(3, "one h1 per page, no skipped heading levels", p)
+
+    # 4 - internal references resolve
+    p = []
+    for name, pg in pages.items():
+        for tag, url in pg.requests:
+            if not resolves(url):
+                p.append(f"{name}: <{tag}> -> {url} does not resolve")
+    check(4, "every internal link, script, style and image resolves", p)
+
+    # 5 - ids unique, IDREFs resolve
+    p = []
+    for name, pg in pages.items():
+        dupes = {i for i in pg.ids if pg.ids.count(i) > 1}
+        for d in sorted(dupes):
+            p.append(f"{name}: duplicate id {d!r}")
+        have = set(pg.ids)
+        for kind, ref in pg.idrefs:
+            if ref not in have:
+                p.append(f"{name}: {kind}={ref!r} points at no element")
+        for tag, url in pg.requests:
+            if tag == "a" and url.startswith("#") and len(url) > 1:
+                if url[1:] not in have:
+                    p.append(f"{name}: href={url!r} points at no element")
+    check(5, "ids unique and every reference resolves", p)
+
+    # 6 - images carry width, height, alt
+    p = []
+    for name, pg in pages.items():
+        for img in pg.imgs:
+            src = img.get("src", "?")
+            for attr in ("width", "height"):
+                if attr not in img:
+                    p.append(f"{name}: img {src} has no {attr}")
+            if "alt" not in img:
+                p.append(f"{name}: img {src} has no alt")
+    check(6, "every img has width, height and alt", p)
+
+    # 7 - structured data parses, and claims nothing invented
+    p = []
+    for name, pg in pages.items():
+        for raw in pg.ld:
+            try:
+                data = json.loads(raw)
+            except json.JSONDecodeError as exc:
+                p.append(f"{name}: JSON-LD does not parse: {exc}")
+                continue
+            blob = json.dumps(data)
+            for forbidden in ("AggregateRating", "\"Review\""):
+                if forbidden in blob:
+                    p.append(f"{name}: JSON-LD contains {forbidden}. "
+                             "There are no ratings or reviews to report.")
+    check(7, "structured data parses, no invented ratings or reviews", p)
+
+    # 8 - no third-party requests
+    p = []
+    for name, pg in pages.items():
+        for tag, url in pg.requests:
+            if tag == "a":
+                continue
+            if url.startswith(("http://", "https://")) and SITE_HOST not in url:
+                p.append(f"{name}: <{tag}> loads third-party {url}")
+    check(8, "no third-party requests", p, pending="S2")
+
+    # 9 - sitemap agrees with reality
+    p = []
+    sm_path = os.path.join(ROOT, "sitemap.xml")
+    if not os.path.isfile(sm_path):
+        p.append("sitemap.xml is missing")
+    else:
+        sm = open(sm_path, encoding="utf-8").read()
+        listed = set(re.findall(r"<loc>\s*([^<\s]+)\s*</loc>", sm))
+        for url in sorted(listed):
+            path = url.split(SITE_HOST, 1)[-1] if SITE_HOST in url else url
+            if not resolves(path):
+                p.append(f"sitemap lists {url} which resolves to no file")
+        for name in pages:
+            if name in ("privacy.html", "terms.html"):
+                continue
+            slug = "/" if name == "index.html" else "/" + name[:-5]
+            want = f"https://{SITE_HOST}{slug}"
+            if want not in listed and want + "/" not in listed:
+                p.append(f"{name} is not listed in the sitemap ({want})")
+    check(9, "sitemap lists every real page and only real pages", p)
+
+    # 10 - banned characters and unconfigured placeholders
+    p = []
+    sources = {name: pg.raw for name, pg in pages.items()}
+    sources["assets/css/styles.css"] = css
+    sources["assets/js/main.js"] = js
+    for name, text in sources.items():
+        for ch, label in BANNED_CHARS:
+            if ch in text:
+                p.append(f"{name}: contains an {label}")
+        if EMOJI.search(text):
+            p.append(f"{name}: contains an emoji")
+        if CONTROL.search(text):
+            p.append(f"{name}: contains a control character")
+        for m in PLACEHOLDER.finditer(text):
+            p.append(f"{name}: unconfigured placeholder {m.group(0)!r}")
+    check(10, "no em dash, en dash, emoji, control char or placeholder key", p)
+
+    # 11 - performed insight
+    p = []
+    for name, pg in pages.items():
+        text = pg.main_text()
+        for pat, why in PERFORMED:
+            for m in re.finditer(pat, text, re.I):
+                p.append(f"{name}: {m.group(0)!r} performs the insight. {why}")
+    check(11, "no performed insight", p)
+
+    # 12 - no sentence shared between pages
+    p = []
+    seen = {}
+    for name, pg in pages.items():
+        for s in sentences(pg.main_text()):
+            seen.setdefault(s, []).append(name)
+    for s, where in sorted(seen.items(), key=lambda kv: -len(set(kv[1]))):
+        uniq = sorted(set(where))
+        if len(uniq) > 1:
+            p.append(f"on {len(uniq)} pages ({', '.join(uniq[:3])}"
+                     f"{'...' if len(uniq) > 3 else ''}): {s[:70]}...")
+        elif len(where) > 1:
+            p.append(f"{len(where)} times on {uniq[0]}: {s[:70]}...")
+    check(12, "no sentence of 9+ words repeats across pages", p, pending="S3")
+
+    # 13 - motion lint
+    p = []
+    if css:
+        if "prefers-reduced-motion" not in css:
+            p.append("no prefers-reduced-motion block anywhere in the stylesheet")
+        for m in re.finditer(r"transition:\s*all\b", css):
+            p.append("transition: all - name the properties instead")
+        for block in re.findall(r"@keyframes[^{]*\{(.*?)\n\}", css, re.S):
+            for prop in re.findall(r"^\s*([a-z-]+)\s*:", block, re.M):
+                if prop not in ("transform", "opacity", "stroke-dashoffset"):
+                    p.append(f"@keyframes animates {prop!r}; "
+                             "only transform, opacity and stroke-dashoffset are cheap")
+    check(13, "motion lint", p, pending="S2")
+
+    # 14 - contrast. Lands with the new palette.
+    check(14, "token contrast (arrives with the new palette)", [])
+
+    # 15 - no inline style attributes
+    p = []
+    for name, pg in pages.items():
+        if pg.inline_styles:
+            p.append(f"{name}: {pg.inline_styles} inline style attributes")
+    check(15, "no inline style attributes", p, pending="S2")
+
+    # 16 - private folders cannot be published
+    p = []
+    ai_path = os.path.join(ROOT, ".assetsignore")
+    if not os.path.isfile(ai_path):
+        p.append(".assetsignore is missing; the repo root is published as-is")
+    else:
+        ai = open(ai_path, encoding="utf-8").read()
+        for needed in ("_tools", "_notes"):
+            if needed not in ai:
+                p.append(f".assetsignore does not exclude {needed}/, "
+                         "so it would be served publicly")
+    gi_path = os.path.join(ROOT, ".gitignore")
+    if not os.path.isfile(gi_path):
+        p.append(".gitignore is missing")
+    elif "_notes" not in open(gi_path, encoding="utf-8").read():
+        p.append(".gitignore does not exclude _notes/")
+    check(16, "private folders are neither committed nor published", p)
+
+    return pages
+
+
+def main():
+    prove_patterns()
+    pages = run()
+
+    print(f"ProAffy gate: {len(pages)} pages\n")
+    failed = 0
+    pending = 0
+    stale = []
+
+    for num, title, problems, sched in results:
+        if problems and sched:
+            pending += 1
+            print(f"PEND {num:>2}  {title}  [fixed in {sched}]")
+            for prob in problems[:4]:
+                print(f"         {prob}")
+            if len(problems) > 4:
+                print(f"         ... and {len(problems) - 4} more")
+        elif problems:
+            failed += 1
+            print(f"FAIL {num:>2}  {title}")
+            for prob in problems[:8]:
+                print(f"         {prob}")
+            if len(problems) > 8:
+                print(f"         ... and {len(problems) - 8} more")
+        elif sched:
+            stale.append((num, title, sched))
+            print(f"PASS {num:>2}  {title}  [marked for {sched}, but it passes now]")
+        else:
+            print(f"PASS {num:>2}  {title}")
+
+    print()
+    if stale:
+        print("A pending marker outlived its defect. Remove it, or the check is "
+              "disabled without anyone deciding to disable it:")
+        for num, title, sched in stale:
+            print(f"  check {num} is marked pending={sched} and now passes")
+        print()
+        return 1
+
+    if pending:
+        print(f"{pending} checks pending, scheduled for a later session.")
+    if failed:
+        print(f"{failed} of {len(results)} checks failed.")
+        return 1
+    print(f"{len(results) - pending} checks passed, {pending} pending.")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
