@@ -390,7 +390,7 @@ def run():
                 continue
             if url.startswith(("http://", "https://")) and SITE_HOST not in url:
                 p.append(f"{name}: <{tag}> loads third-party {url}")
-    check(8, "no third-party requests", p, pending="S2")
+    check(8, "no third-party requests", p)
 
     # 9 - sitemap agrees with reality
     p = []
@@ -580,6 +580,35 @@ def run():
         if "form-sent" in pg.raw and 'id="sent"' not in pg.raw:
             p.append(f"{name} has a confirmation panel with no id=\"sent\" to target")
     check(19, "every form is wired, guarded and confirms", p)
+
+    # 20 - the repeated chrome matches its template
+    p = []
+    try:
+        sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+        import chrome  # safe: guarded by __main__, stdlib only, no work at import
+
+        css_v = chrome.version(os.path.join(ROOT, "assets", "css", "styles.css"))
+        js_v = chrome.version(os.path.join(ROOT, "assets", "js", "main.js"))
+        fonts_v = chrome.version(os.path.join(ROOT, "assets", "css", "fonts.css"))
+        wanted = {
+            "footer": chrome.FOOTER_BLOCK,
+            "assets": chrome.assets_block(css_v, js_v, fonts_v),
+        }
+        for name, pg in pages.items():
+            for region in ("nav", "footer", "assets"):
+                open_m, close_m = chrome.MARKERS[region]
+                if open_m not in pg.raw or close_m not in pg.raw:
+                    p.append(f"{name}: no {region} markers; run python _tools/chrome.py")
+                    continue
+                body = (chrome.nav_block(chrome.ACTIVE.get(name)) if region == "nav"
+                        else wanted[region])
+                got = pg.raw.split(open_m, 1)[1].split(close_m, 1)[0]
+                if got.strip("\n") != body:
+                    p.append(f"{name}: the {region} block was hand-edited and no longer "
+                             "matches the template; run python _tools/chrome.py")
+    except Exception as exc:  # noqa: BLE001
+        p.append(f"could not check the chrome: {exc}")
+    check(20, "repeated chrome matches its template", p)
 
     return pages
 
