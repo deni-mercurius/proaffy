@@ -154,6 +154,7 @@ class Page(HTMLParser):
         self.inline_styles = 0
         self.ld = []              # raw json strings
         self.canonical = None
+        self.robots = None
 
         self._stack = []
         self._text = []           # text inside <main>
@@ -196,6 +197,8 @@ class Page(HTMLParser):
 
         if tag == "meta" and a.get("name") == "description":
             self.description = a.get("content")
+        if tag == "meta" and a.get("name") == "robots":
+            self.robots = a.get("content", "")
 
         if tag == "link":
             rel = (a.get("rel") or "").lower()
@@ -401,14 +404,18 @@ def run():
             path = url.split(SITE_HOST, 1)[-1] if SITE_HOST in url else url
             if not resolves(path):
                 p.append(f"sitemap lists {url} which resolves to no file")
-        for name in pages:
-            if name in ("privacy.html", "terms.html"):
-                continue
+        # The rule, rather than a list of exceptions: a page that says noindex
+        # must not be in the sitemap, and an indexable page must be.
+        for name, pg in pages.items():
             slug = "/" if name == "index.html" else "/" + name[:-5]
             want = f"https://{SITE_HOST}{slug}"
-            if want not in listed and want + "/" not in listed:
-                p.append(f"{name} is not listed in the sitemap ({want})")
-    check(9, "sitemap lists every real page and only real pages", p)
+            present = want in listed or want + "/" in listed
+            noindex = "noindex" in (pg.robots or "").lower()
+            if noindex and present:
+                p.append(f"{name} is noindex but the sitemap lists it ({want})")
+            elif not noindex and not present:
+                p.append(f"{name} is indexable but the sitemap omits it ({want})")
+    check(9, "sitemap and robots meta agree on what is indexable", p)
 
     # 10 - banned characters and unconfigured placeholders
     p = []
@@ -492,6 +499,48 @@ def run():
     elif "_notes" not in open(gi_path, encoding="utf-8").read():
         p.append(".gitignore does not exclude _notes/")
     check(16, "private folders are neither committed nor published", p)
+
+    # 17 - edge headers. Without these the host serves nothing but defaults,
+    # and every asset is revalidated on every page load.
+    p = []
+    h_path = os.path.join(ROOT, "_headers")
+    if not os.path.isfile(h_path):
+        p.append("_headers is missing; the host will serve no security headers "
+                 "and no asset caching")
+    else:
+        h = open(h_path, encoding="utf-8").read()
+        for header in ("X-Content-Type-Options", "Referrer-Policy",
+                       "X-Frame-Options", "Permissions-Policy",
+                       "Strict-Transport-Security"):
+            if header not in h:
+                p.append(f"_headers does not set {header}")
+        for path in ("/assets/css/*", "/assets/js/*"):
+            block = h.split(path, 1)
+            if len(block) < 2 or "immutable" not in block[1].split("\n\n", 1)[0]:
+                p.append(f"_headers does not cache {path} immutable")
+        if os.path.isfile(ai_path):
+            ignored = open(ai_path, encoding="utf-8").read()
+            if "_headers" in ignored:
+                p.append("_headers is listed in .assetsignore, so it is never "
+                         "uploaded and never takes effect")
+    check(17, "edge sets security headers and caches assets", p)
+
+    # 18 - routing is pinned, not inherited from a default
+    p = []
+    if not os.path.isfile(os.path.join(ROOT, "404.html")):
+        p.append("404.html is missing")
+    wr_path = os.path.join(ROOT, "wrangler.jsonc")
+    if not os.path.isfile(wr_path):
+        p.append("wrangler.jsonc is missing")
+    else:
+        wr = open(wr_path, encoding="utf-8").read()
+        if "html_handling" not in wr:
+            p.append("wrangler.jsonc does not pin html_handling; the site's "
+                     "clean URLs depend on an unwritten default")
+        if "not_found_handling" not in wr:
+            p.append("wrangler.jsonc does not set not_found_handling, so 404.html "
+                     "is never served")
+    check(18, "routing and 404 handling are pinned", p)
 
     return pages
 

@@ -1,0 +1,28 @@
+# One /* rule sets every security header. The asset rules set only
+# Cache-Control, so no header is ever written by two rules matching the
+# same request.
+#
+# No Content-Security-Policy yet, deliberately. The site still loads three
+# font families from a third party and still carries inline style attributes,
+# so a useful policy cannot be written until both are gone. It lands with the
+# design system, and gate checks 8 and 15 are what say when that is true.
+
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  X-Frame-Options: DENY
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), interest-cohort=()
+  Strict-Transport-Security: max-age=15552000
+
+# Immutable, because these are versioned by a query string in the markup:
+# a change ships as a new URL, so a returning visitor never needs to revalidate.
+/assets/css/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/assets/js/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# 30 days and NOT immutable: images are referenced by a stable filename, so
+# replacing one under the same name has to reach people who already have it.
+/assets/images/*
+  Cache-Control: public, max-age=2592000

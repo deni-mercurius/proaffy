@@ -30,6 +30,23 @@ class Handler(http.server.SimpleHTTPRequestHandler):
             return candidate
         return fs_path
 
+    def send_error(self, code, message=None, explain=None):
+        # Production serves 404.html with a 404 status (not_found_handling).
+        # Do the same here, or the one page nobody tests stays untested.
+        if code == 404:
+            page = os.path.join(DIRECTORY, "404.html")
+            if os.path.isfile(page):
+                with open(page, "rb") as fh:
+                    body = fh.read()
+                self.send_response(404)
+                self.send_header("Content-Type", "text/html; charset=utf-8")
+                self.send_header("Content-Length", str(len(body)))
+                self.end_headers()
+                if self.command != "HEAD":
+                    self.wfile.write(body)
+                return
+        super().send_error(code, message, explain)
+
     def end_headers(self):
         self.send_header("Cache-Control", "no-store, no-cache, must-revalidate")
         self.send_header("Pragma", "no-cache")

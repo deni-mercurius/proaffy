@@ -1,7 +1,17 @@
 {
+  // Static assets served from the repo root. The site has no build step.
   "name": "proaffy",
   "compatibility_date": "2024-11-01",
   "assets": {
-    "directory": "./"
+    "directory": "./",
+
+    // Pinned rather than left to the default. The site links to /about, not
+    // /about.html, and this is the behaviour that serves it: /about.html and
+    // /about/ both redirect to /about. It was previously implicit, which made
+    // a working site depend on a default nobody had written down.
+    "html_handling": "auto-trailing-slash",
+
+    // Serve 404.html with a real 404 status instead of a bare response.
+    "not_found_handling": "404-page"
   }
 }
