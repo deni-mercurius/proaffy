@@ -28,6 +28,13 @@
 /assets/js/*
   Cache-Control: public, max-age=31536000, immutable
 
+# Fonts are the strongest immutable case on the site: the filename carries the
+# family and weight, so a change is a new file rather than new bytes at the same
+# name. Without this rule they were revalidated on every page load, which is 75
+# KB of round trips for four files that cannot change.
+/assets/fonts/*
+  Cache-Control: public, max-age=31536000, immutable
+
 # 30 days and NOT immutable: images are referenced by a stable filename, so
 # replacing one under the same name has to reach people who already have it.
 /assets/images/*

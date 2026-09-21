@@ -514,7 +514,7 @@ def run():
                        "Strict-Transport-Security", "Content-Security-Policy"):
             if header not in h:
                 p.append(f"_headers does not set {header}")
-        for path in ("/assets/css/*", "/assets/js/*"):
+        for path in ("/assets/css/*", "/assets/js/*", "/assets/fonts/*"):
             block = h.split(path, 1)
             if len(block) < 2 or "immutable" not in block[1].split("\n\n", 1)[0]:
                 p.append(f"_headers does not cache {path} immutable")
