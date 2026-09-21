@@ -542,6 +542,45 @@ def run():
                      "is never served")
     check(18, "routing and 404 handling are pinned", p)
 
+    # 19 - every form is actually wired to something
+    p = []
+    key_shape = re.compile(r"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+                           re.I)
+    for name, pg in pages.items():
+        for form in re.findall(r"<form\b.*?</form>", pg.raw, re.S):
+            fid = re.search(r'id="([^"]+)"', form)
+            label = f"{name}: form {fid.group(1) if fid else '(no id)'}"
+
+            action = re.search(r'action="([^"]*)"', form)
+            if not action or not action.group(1).strip():
+                p.append(f"{label} has no action, so submitting it goes nowhere")
+                continue
+
+            key = re.search(r'name="access_key"\s+value="([^"]*)"', form)
+            if not key:
+                p.append(f"{label} carries no access_key")
+            elif not key_shape.match(key.group(1)):
+                p.append(f"{label} has an access_key that is not a key")
+
+            redirect = re.search(r'name="redirect"\s+value="([^"]*)"', form)
+            if not redirect:
+                p.append(f"{label} has no redirect, so the visitor lands on a "
+                         "third-party page after submitting")
+            elif SITE_HOST not in redirect.group(1):
+                p.append(f"{label} redirects off-site: {redirect.group(1)}")
+            elif "#sent" not in redirect.group(1):
+                p.append(f"{label} redirects without #sent, so the confirmation "
+                         "panel never shows")
+
+            if "botcheck" not in form:
+                p.append(f"{label} has no honeypot")
+            if "novalidate" in form:
+                p.append(f"{label} sets novalidate but nothing validates it now")
+
+        if "form-sent" in pg.raw and 'id="sent"' not in pg.raw:
+            p.append(f"{name} has a confirmation panel with no id=\"sent\" to target")
+    check(19, "every form is wired, guarded and confirms", p)
+
     return pages
 
 

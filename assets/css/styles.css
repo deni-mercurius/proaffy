@@ -1061,10 +1061,27 @@ input, textarea, select { font-family: inherit; font-size: inherit; }
   margin-top: var(--sp-2);
   line-height: 1.5;
 }
-/* Status colour lives here, not in main.js, so the palette has one home. */
-.form__status--ok  { color: var(--clr-accent); }
-.form__status--err { color: #ef4444; }
-.form__status a    { color: inherit; text-decoration: underline; }
+/* The form posts natively and the endpoint redirects back with #sent, so
+   :target reveals the confirmation. No JavaScript is involved, which is why
+   the form still works with scripting disabled. */
+.form-sent { display: none; }
+.form-sent:target {
+  display: block;
+  background: var(--clr-bg-alt);
+  border-left: 3px solid var(--clr-accent);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  padding: var(--sp-4) var(--sp-5);
+  margin-bottom: var(--sp-6);
+}
+.form-sent__title {
+  font-family: var(--font-accent);
+  font-weight: 600;
+  margin-bottom: var(--sp-2);
+}
+.form-sent a { color: var(--clr-accent); }
+
+/* Honeypot. Bots fill it in, people never see it. */
+.hp { display: none !important; }
 
 /* ── Blog Index ──────────────────────────────────────────── */
 .blog-grid {

@@ -31,8 +31,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap">
-  <link rel="stylesheet" href="assets/css/styles.css?v=10" />
-  <script defer src="assets/js/main.js?v=3"></script>
+  <link rel="stylesheet" href="assets/css/styles.css?v=12" />
+  <script defer src="assets/js/main.js?v=5"></script>
 
   <!-- Organization + WebSite knowledge graph -->
   <script type="application/ld+json">
@@ -316,9 +316,22 @@
         <p class="cta-email__sub">
           Let us install the ThermoGrowth Engine in your business for free and watch the jobs roll in.
         </p>
-        <form class="cta-email__form" id="ctaEmailForm" novalidate>
+        <div class="form-sent" id="sent" role="status">
+          <p class="form-sent__title">Thank you. Your message reached us.</p>
+          <p>We reply within one business day. If it is urgent, email
+            <a href="mailto:info@proaffy.com">info@proaffy.com</a>.</p>
+        </div>
+
+        <form class="cta-email__form" id="ctaEmailForm"
+              action="https://api.web3forms.com/submit" method="POST">
+              <input type="hidden" name="access_key" value="5da7b2bb-24b2-42ad-96ac-7228dd4ce8d6" />
+              <input type="hidden" name="subject" value="Free pilot request from the site footer" />
+              <input type="hidden" name="redirect" value="https://proaffy.com/blog-hvac-seo?sent=1#sent" />
+              <input type="checkbox" name="botcheck" class="hp" tabindex="-1"
+                     autocomplete="off" aria-hidden="true" />
           <input
             type="email"
+            name="email"
             class="cta-email__input"
             placeholder="Email Address..."
             aria-label="Email address"
