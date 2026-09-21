@@ -30,7 +30,7 @@
   <link rel="preload" as="font" type="font/woff2" href="assets/fonts/ibm-plex-sans-400.woff2" crossorigin />
   <link rel="preload" as="font" type="font/woff2" href="assets/fonts/ibm-plex-sans-600.woff2" crossorigin />
   <link rel="stylesheet" href="assets/css/fonts.css?v=4044ff39" />
-  <link rel="stylesheet" href="assets/css/styles.css?v=5613d045" />
+  <link rel="stylesheet" href="assets/css/styles.css?v=266c2c11" />
   <script defer src="assets/js/main.js?v=8e6f6867"></script>
   <!-- /chrome:assets -->
 
@@ -127,7 +127,7 @@
   <main id="main">
 
     <!-- ── Contact Hero ──────────────────────────────────── -->
-    <section class="hero" style="min-height:55vh;" aria-label="Contact page hero">
+    <section class="hero hero--short" aria-label="Contact page hero">
       <div class="hero__content">
         <span class="section-label">The ThermoGrowth Engine</span>
         <h1 class="hero__title">
@@ -177,14 +177,14 @@
               <div class="form__group">
                 <label class="form__label">Name</label>
                 <div class="form__row">
-                  <div class="form__group" style="gap:var(--sp-2)">
-                    <label class="form__label" for="firstName" style="font-weight:400;font-size:var(--fs-sm)">
+                  <div class="form__group form__group--tight">
+                    <label class="form__label form__label--sub" for="firstName">
                       First Name <span>(required)</span>
                     </label>
                     <input type="text" id="firstName" name="firstName" class="form__input" autocomplete="given-name" required />
                   </div>
-                  <div class="form__group" style="gap:var(--sp-2)">
-                    <label class="form__label" for="lastName" style="font-weight:400;font-size:var(--fs-sm)">
+                  <div class="form__group form__group--tight">
+                    <label class="form__label form__label--sub" for="lastName">
                       Last Name <span>(required)</span>
                     </label>
                     <input type="text" id="lastName" name="lastName" class="form__input" autocomplete="family-name" required />

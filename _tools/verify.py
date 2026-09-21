@@ -470,7 +470,7 @@ def run():
                 if prop not in ("transform", "opacity", "stroke-dashoffset"):
                     p.append(f"@keyframes animates {prop!r}; "
                              "only transform, opacity and stroke-dashoffset are cheap")
-    check(13, "motion lint", p, pending="S2")
+    check(13, "motion lint", p)
 
     # 14 - contrast. Lands with the new palette.
     check(14, "token contrast (arrives with the new palette)", [])
@@ -480,7 +480,7 @@ def run():
     for name, pg in pages.items():
         if pg.inline_styles:
             p.append(f"{name}: {pg.inline_styles} inline style attributes")
-    check(15, "no inline style attributes", p, pending="S2")
+    check(15, "no inline style attributes", p)
 
     # 16 - private folders cannot be published
     p = []
@@ -511,13 +511,28 @@ def run():
         h = open(h_path, encoding="utf-8").read()
         for header in ("X-Content-Type-Options", "Referrer-Policy",
                        "X-Frame-Options", "Permissions-Policy",
-                       "Strict-Transport-Security"):
+                       "Strict-Transport-Security", "Content-Security-Policy"):
             if header not in h:
                 p.append(f"_headers does not set {header}")
         for path in ("/assets/css/*", "/assets/js/*"):
             block = h.split(path, 1)
             if len(block) < 2 or "immutable" not in block[1].split("\n\n", 1)[0]:
                 p.append(f"_headers does not cache {path} immutable")
+        csp = ""
+        for line in h.splitlines():
+            if "Content-Security-Policy:" in line:
+                csp = line.split(":", 1)[1]
+        if csp:
+            if "unsafe-inline" in csp or "unsafe-eval" in csp:
+                p.append("the CSP contains an unsafe- escape hatch; the fonts are "
+                         "local and the inline styles are gone, so it needs none")
+            if "api.web3forms.com" not in csp:
+                p.append("the CSP does not allow the form endpoint, so submitting "
+                         "would be blocked")
+            elif "form-action" not in csp:
+                p.append("the CSP allows the form endpoint but not under "
+                         "form-action; the forms post natively, so connect-src "
+                         "alone would block them while looking correct")
         if os.path.isfile(ai_path):
             ignored = open(ai_path, encoding="utf-8").read()
             if "_headers" in ignored:

@@ -340,13 +340,15 @@ input, textarea, select { font-family: inherit; font-size: inherit; }
   content: '';
   position: absolute;
   bottom: -2px; left: 0;
-  width: 0; height: 2px;
+  width: 100%; height: 2px;
   background: var(--clr-primary);
-  transition: width var(--dur-base) var(--ease);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--dur-base) var(--ease);
 }
 .nav__link:hover { color: var(--clr-primary); }
 .nav__link:hover::after,
-.nav__link.active::after { width: 100%; }
+.nav__link.active::after { transform: scaleX(1); }
 
 .nav__cta { font-size: var(--fs-base); padding: var(--sp-2) var(--sp-6); }
 
@@ -450,7 +452,8 @@ input, textarea, select { font-family: inherit; font-size: inherit; }
   z-index: 1;
 }
 
-.marquee-wrap:hover .marquee-track { animation-play-state: paused; }
+.marquee-wrap:hover .marquee-track,
+.marquee-wrap:focus-within .marquee-track { animation-play-state: paused; }
 
 .marquee-track {
   display: flex;
@@ -1509,3 +1512,59 @@ input, textarea, select { font-family: inherit; font-size: inherit; }
   --clr-text-muted:   var(--text-2-on-ink);
   --clr-border:       var(--rule-ink);
 }
+
+/* ── Reduced motion ──────────────────────────────────────── */
+/* There was no such block at all, against two unguarded infinite animations.
+   Two layers, because the blanket alone is not enough: collapsing the marquee
+   to 1ms freezes it mid-word, showing half a phrase. Every reduced end state
+   carries the same information as the animated one. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    animation-delay: 0ms !important;
+    transition-duration: 1ms !important;
+    transition-delay: 0ms !important;
+  }
+
+  html { scroll-behavior: auto; }
+
+  .marquee-track {
+    animation: none;
+    width: auto;
+    transform: none;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  /* The track holds the phrases twice so the loop can seam. Without motion the
+     duplicate set is just the same words written again. */
+  .marquee-track__item:nth-child(n+5) { display: none; }
+}
+
+/* ── Small classes that replaced inline styles ───────────── */
+/* These were 23 style attributes across 11 files. They are here not for tidiness
+   but because a Content-Security-Policy with style-src 'self' cannot be written
+   while any of them exists, and the policy is worth more than the shortcut. */
+
+/* A section that follows a page header and should not double the gap. */
+.section--flush { padding-top: 0; }
+
+/* A link that sits on its own line under a block of copy. */
+.link-block { display: block; margin-top: var(--sp-5); }
+
+/* A short hero, used where the page is a form rather than a pitch. */
+.hero--short { min-height: 55vh; }
+
+/* A sub-label inside a paired field, quieter than the group label above it. */
+.form__label--sub { font-weight: 400; font-size: var(--fs-sm); }
+.form__group--tight { gap: var(--sp-2); }
+
+/* Reversed-out text on an ink band. */
+.on-ink { color: var(--text-on-ink); }
+
+/* Spacing, named for the step rather than the pixel count, so they move with
+   the scale instead of pinning it. */
+.mt-5  { margin-top: var(--sp-5); }
+.mt-8  { margin-top: var(--sp-8); }
+.mt-10 { margin-top: var(--sp-10); }
+.mb-6  { margin-bottom: var(--sp-6); }

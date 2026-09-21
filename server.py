@@ -57,8 +57,17 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         print(f"  {self.address_string()} → {fmt % args}")
 
 
+class ThreadedServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
+    """Threaded, because the single-threaded version deadlocks the moment a
+    second request arrives while the first is still open. A browser does that
+    routinely, and any tooling that proxies a page through this server does it
+    every time."""
+    daemon_threads = True
+    allow_reuse_address = True
+
+
 if __name__ == "__main__":
-    with socketserver.TCPServer(("", PORT), Handler) as httpd:
+    with ThreadedServer(("", PORT), Handler) as httpd:
         url = f"http://localhost:{PORT}"
         print(f"\n  ProAffy dev server running at {url}\n  Press Ctrl+C to stop.\n")
         webbrowser.open(url)

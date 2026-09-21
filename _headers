@@ -2,10 +2,15 @@
 # Cache-Control, so no header is ever written by two rules matching the
 # same request.
 #
-# No Content-Security-Policy yet, deliberately. The site still loads three
-# font families from a third party and still carries inline style attributes,
-# so a useful policy cannot be written until both are gone. It lands with the
-# design system, and gate checks 8 and 15 are what say when that is true.
+# The Content-Security-Policy below was withheld until it could be strict.
+# The fonts are now local and the 23 inline style attributes are gone, so
+# style-src and font-src need no escape hatch and script-src needs no hashes.
+#
+# form-action, NOT connect-src. The forms post natively rather than by fetch,
+# so a connect-src entry alone would block them while looking correct.
+#
+# No hashes for the JSON-LD blocks: a script whose type is not a JavaScript
+# MIME type is a data block and is not subject to script-src.
 
 /*
   X-Content-Type-Options: nosniff
@@ -13,6 +18,7 @@
   X-Frame-Options: DENY
   Permissions-Policy: camera=(), microphone=(), geolocation=(), interest-cohort=()
   Strict-Transport-Security: max-age=15552000
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; form-action 'self' https://api.web3forms.com; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; upgrade-insecure-requests
 
 # Immutable, because these are versioned by a query string in the markup:
 # a change ships as a new URL, so a returning visitor never needs to revalidate.
