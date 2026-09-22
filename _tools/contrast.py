@@ -10,27 +10,23 @@ usage: python _tools/contrast.py
 import sys
 
 TOK = {
-    # Surfaces
-    "paper":         "#FAF8F4",
-    "paper-2":       "#F1EDE4",
-    "ink":           "#17181B",
-    "ink-2":         "#232529",
-    # Text
-    "text":          "#17181B",
-    "text-2":        "#55565B",
-    "text-on-ink":   "#F2F0EB",
-    "text-2-on-ink": "#A8A6A0",
-    # Rules
-    "rule":          "#C6BEA9",
-    "rule-ink":      "#3A3C42",
-    # Copper carries measurement
-    "copper-700":    "#8F4415",
-    "copper-500":    "#B4631E",
-    "copper-400":    "#C87A3C",
-    # Signal, rationed
-    "orange":        "#C84219",
-    "orange-on-ink": "#E8734B",
-    "green":         "#1D6B45",
+    # Sampled from the logo itself. #5010D0 is the mark's dominant violet,
+    # unmodified, because it already clears 8:1 on the page ground.
+    "violet":      "#5010D0",
+    "violet-deep": "#3D0EA8",
+    "violet-wash": "#F1EDFD",
+    "cyan":        "#0090E0",
+    "cyan-text":   "#0A6FA8",
+
+    "bg":     "#FFFFFF",
+    "bg-2":   "#F4F3F8",
+    "ink":    "#141220",
+    "muted":  "#56536B",
+    "rule":   "#E3E1EC",
+    "on-fill": "#FFFFFF",
+
+    "err":    "#C11B4B",
+    "ok":     "#0F7A4A",
 }
 
 
@@ -52,45 +48,33 @@ def ratio(a, b):
 
 # (foreground, background, minimum, where)
 PAIRS = [
-    ("text", "paper", 7.0, "body copy, held to AAA not AA"),
-    ("text", "paper-2", 7.0, "body on the alternate band"),
-    ("text-2", "paper", 4.5, "captions and meta on paper"),
-    ("text-2", "paper-2", 4.5, "captions on the alternate band"),
+    ("ink", "bg", 7.0, "body copy, held to AAA"),
+    ("ink", "bg-2", 7.0, "body on the tinted band"),
+    ("ink", "violet-wash", 7.0, "body inside a violet panel"),
+    ("muted", "bg", 4.5, "captions and meta"),
+    ("muted", "bg-2", 4.5, "captions on the tinted band"),
 
-    ("text-on-ink", "ink", 7.0, "body reversed out of an ink band"),
-    ("text-on-ink", "ink-2", 7.0, "body on a raised block inside ink"),
-    ("text-2-on-ink", "ink", 4.5, "muted text on ink"),
+    ("violet", "bg", 4.5, "the brand colour as text, eyebrows and figures"),
+    ("violet", "bg-2", 4.5, "the same on the tinted band"),
+    ("violet", "violet-wash", 4.5, "the same inside its own panel"),
+    ("on-fill", "violet", 4.5, "button label on the brand fill"),
+    ("on-fill", "violet-deep", 4.5, "button label on the pressed state"),
 
-    ("copper-700", "paper", 4.5, "footnote markers and source labels"),
-    ("copper-700", "paper-2", 4.5, "same on the alternate band"),
-    ("copper-400", "ink", 4.5, "copper inside an ink band"),
+    ("cyan-text", "bg", 4.5, "cyan where it has to carry small text"),
+    ("err", "bg", 4.5, "form errors"),
+    ("ok", "bg", 4.5, "form success"),
 
-    ("orange", "paper", 4.5, "the loss figure, and form errors"),
-    ("orange-on-ink", "ink", 4.5, "the same signal reversed out"),
-    ("green", "paper", 4.5, "form success"),
-
-    # Action is ink. Pill buttons, filled dark, paper text.
-    ("text-on-ink", "ink", 4.5, "primary button label"),
-    ("paper", "copper-700", 4.5, "button label on the copper hover state"),
-    ("text", "paper", 3.0, "ink-outlined button border against paper"),
-
-    # Focus must be visible on both surfaces.
-    ("copper-700", "paper", 3.0, "focus ring on paper"),
-    ("copper-400", "ink", 3.0, "focus ring inside an ink band"),
+    ("violet", "bg", 3.0, "focus ring on the page ground"),
+    ("ink", "bg", 3.0, "outlined button border"),
 ]
 
 # (foreground, background, must stay BELOW, why)
 MUST_FAIL = [
-    ("copper-500", "paper", 4.5,
-     "copper-500 is display numerals at 24px and over. If it ever clears 4.5 "
-     "someone has darkened it, and the large-text-only rule has quietly become "
-     "a lie."),
-    ("copper-700", "ink", 3.0,
-     "the paper copper is nearly invisible on ink at 2.54:1. This pair must "
-     "never be used, which is why the dark containers redefine --clr-accent to "
-     "copper-400. Found by measuring rendered pages, not this file: a static "
-     "checker only tests the pairs somebody thought to list."),
-    ("rule", "paper", 3.0,
+    ("cyan", "bg", 4.5,
+     "the logo's cyan is 3.32:1. It is for rules, marks and large type only. If "
+     "it ever clears 4.5 somebody has darkened it and the rule has quietly "
+     "become a lie."),
+    ("rule", "bg", 3.0,
      "the hairline is decoration. If it clears 3.0 it reads as a border and "
      "starts carrying meaning colour alone should not carry."),
 ]

@@ -25,10 +25,10 @@ FONTS = os.path.join(ROOT, "assets", "fonts")
 OUT = os.path.join(ROOT, "assets", "images", "og-image.png")
 
 W, H = 1200, 630
-PAPER = (250, 248, 244)
-INK = (23, 24, 27)
-COPPER = (143, 68, 21)
-TEXT2 = (85, 86, 91)
+BG = (255, 255, 255)
+INK = (20, 18, 32)
+VIOLET = (80, 16, 208)
+TEXT2 = (86, 83, 107)
 
 HEADLINE = "Every lead gets a real reply in 60 seconds"
 EYEBROW = "PROAFFY  /  HVAC AND SOLAR"
@@ -62,18 +62,18 @@ def wrap(draw, text, font, max_w):
 
 
 def main():
-    img = Image.new("RGB", (W, H), PAPER)
+    img = Image.new("RGB", (W, H), BG)
     d = ImageDraw.Draw(img)
 
     pad = 84
-    mono = face("ibm-plex-mono-500.woff2", 22)
+    mono = face("ibm-plex-sans-600.woff2", 22)
     sans = face("ibm-plex-sans-600.woff2", 68)
-    small = face("ibm-plex-mono-500.woff2", 24)
+    small = face("ibm-plex-sans-400.woff2", 24)
 
     # Eyebrow, tracked out by hand since PIL has no letter-spacing.
     x = pad
     for ch in EYEBROW:
-        d.text((x, pad), ch, font=mono, fill=COPPER)
+        d.text((x, pad), ch, font=mono, fill=VIOLET)
         x += d.textlength(ch, font=mono) + 3
 
     y = pad + 92
@@ -83,12 +83,12 @@ def main():
 
     # The measured rule: solid, exactly as wide as what it underlines.
     rule_w = 240
-    d.rectangle([pad, y + 26, pad + rule_w, y + 30], fill=COPPER)
+    d.rectangle([pad, y + 26, pad + rule_w, y + 32], fill=VIOLET)
 
     d.text((pad, y + 56), FOOT, font=small, fill=TEXT2)
 
     # One ink band at the foot, the same device the pages use.
-    d.rectangle([0, H - 26, W, H], fill=INK)
+    d.rectangle([0, H - 26, W, H], fill=VIOLET)
 
     img.save(OUT, "PNG", optimize=True)
     kb = os.path.getsize(OUT) / 1024

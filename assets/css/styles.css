@@ -12,128 +12,102 @@
 
    Ratios are not asserted here. _tools/contrast.py measures every pair and the
    build fails if one drifts, including two that must stay BELOW a ceiling. */
+/* Every colour here is the logo's, sampled from the mark itself. The previous
+   palette deliberately avoided violet and cyan so the logo would read as a
+   separate object, which was the wrong call: it left the brand colour stranded
+   in the corner of a page that shared nothing with it.
+
+   #5010D0 is the logo's dominant violet, unmodified, and it measures 8.66:1 on
+   the page ground, so the brand colour can carry text and fill a button with no
+   adjustment. It is used flat and never as a gradient, because a violet-to-cyan
+   ramp at 135 degrees is the single most generic thing on the web and this logo
+   already contains one.
+
+   Light throughout. There are no dark bands. */
 :root {
-  /* Surfaces. A printed work order: unbleached bond, and its carbon second
-     sheet. Warm enough that it cannot be mistaken for a default white. */
-  --paper:         #FAF8F4;
-  --paper-2:       #F1EDE4;
-  /* The black anodising on an aluminium PV module frame. Warm-neutral, not
-     the blue-grey that every framework ships. */
-  --ink:           #17181B;
-  --ink-2:         #232529;
+  --violet:      #5010D0;   /* the mark's own violet. 8.66:1 on the ground */
+  --violet-deep: #3D0EA8;   /* pressed and hover */
+  --violet-wash: #F1EDFD;   /* the lightest tint, for a filled panel */
+  --cyan:        #0090E0;   /* the mark's cyan. 3.32:1, so never body text */
+  --cyan-text:   #0A6FA8;   /* where cyan has to carry small text */
 
-  /* Text. One ink, used as ink. */
-  --text:          #17181B;
-  --text-2:        #55565B;
-  --text-on-ink:   #F2F0EB;   /* never pure white, which glares on dark */
-  --text-2-on-ink: #A8A6A0;
+  --bg:     #FFFFFF;
+  --bg-2:   #F4F3F8;        /* cool, tinted toward the mark rather than grey */
+  --ink:    #141220;        /* near-black with a violet cast. 17.72:1 */
+  --muted:  #56536B;        /* 7.08:1 */
+  --rule:   #E3E1EC;
 
-  /* Hairlines. The printed rule on a triplicate form: warm grey-tan, never
-     cool grey. Decorative, and contrast.py holds it below 3:1 so it can never
-     start carrying meaning on its own. */
-  --rule:          #C6BEA9;
-  --rule-ink:      #3A3C42;
+  /* Old names kept as aliases so every existing rule re-themes at once. */
+  --paper: var(--bg);
+  --paper-2: var(--bg-2);
+  --ink-2: var(--bg-2);
+  --text: var(--ink);
+  --text-2: var(--muted);
+  --on-fill: #FFFFFF;        /* text on a violet fill */
+  --text-on-ink: var(--on-fill);
+  --text-2-on-ink: var(--muted);
+  --rule-ink: var(--rule);
+  --copper-700: var(--violet);
+  --copper-500: var(--violet);
+  --copper-400: var(--violet);
+  --orange: #C11B4B;
+  --orange-on-ink: #C11B4B;
+  --green: #0F7A4A;
 
-  /* Copper carries measurement, and is the only colour allowed on a number.
-     Type L refrigerant tubing after a season on a roof, and the tinned busbar
-     inside every PV module: the one material both trades still bend by hand. */
-  --copper-700:    #8F4415;   /* small text, footnote markers, the + glyph */
-  --copper-500:    #B4631E;   /* display numerals 24px and up. NEVER body. */
-  --copper-400:    #C87A3C;   /* copper inside an ink band */
-
-  /* Signal, rationed to three appearances per page. ANSI Z535, the standard
-     behind the tag on every disconnect and combiner box. Copper and orange sit
-     close in hue, so they are separated by job: copper is dark and appears
-     around a number, orange is saturated and means something is wrong. */
-  --orange:        #C84219;
-  --orange-on-ink: #E8734B;
-  --green:         #1D6B45;
-
-  /* The old names, kept as aliases. Roughly 100 rules still use them, and
-     pointing them at the new palette re-themes the whole site in one edit
-     instead of a hundred. They retire as the components are rebuilt. */
-  --clr-primary:        var(--ink);
-  --clr-primary-h:      var(--ink-2);
-  --clr-accent:         var(--copper-700);
-  --clr-accent-h:       var(--ink);
-  --clr-indigo:         var(--copper-500);
-
-  --clr-dark:           var(--ink);
-  --clr-dark-2:         var(--ink-2);
-  --clr-bg:             var(--paper);
-  --clr-bg-alt:         var(--paper-2);
-  --clr-surface:        var(--paper-2);
+  --clr-primary:        var(--violet);
+  --clr-primary-h:      var(--violet-deep);
+  --clr-accent:         var(--violet);
+  --clr-accent-h:       var(--violet-deep);
+  --clr-indigo:         var(--violet);
+  --clr-dark:           var(--bg-2);
+  --clr-dark-2:         var(--bg-2);
+  --clr-bg:             var(--bg);
+  --clr-bg-alt:         var(--bg-2);
+  --clr-surface:        var(--bg-2);
   --clr-border:         var(--rule);
-  --clr-border-dark:    var(--rule-ink);
+  --clr-border-dark:    var(--rule);
+  --clr-text:           var(--ink);
+  --clr-text-muted:     var(--muted);
+  --clr-text-on-dark:   var(--on-fill);
+  --clr-text-muted-dark:var(--muted);
 
-  --clr-text:           var(--text);
-  --clr-text-muted:     var(--text-2);
-  --clr-text-on-dark:   var(--text-on-ink);
-  --clr-text-muted-dark:var(--text-2-on-ink);
-
-  /* Typography. Two faces, self-hosted, declared in fonts.css.
-     Sans is what the site asserts, mono is what it measured, so every figure
-     on the page is mono and reads as a reading rather than a claim. */
-  --font-mono: 'IBM Plex Mono', 'IBM Plex Mono Fallback', 'Courier New', monospace;
+  /* One face. The mono was the "horrible" number font and it is gone. */
   --font-sans: 'IBM Plex Sans', 'IBM Plex Sans Fallback', Arial, sans-serif;
+  --font-mono: var(--font-sans);
+  --font-display: var(--font-sans);
+  --font-accent:  var(--font-sans);
+  --font-body:    var(--font-sans);
 
-  /* The three old names still have 41 consumers between them. They are kept
-     as aliases so the type change is one edit rather than 41, and they are
-     retired when the components are rebuilt. */
-  --font-display: var(--font-mono);  /* section labels, marquee, figures */
-  --font-accent:  var(--font-sans);  /* headings and buttons */
-  --font-body:    var(--font-sans);  /* body copy */
+  --fs-xs:   0.8125rem;
+  --fs-sm:   0.9375rem;
+  --fs-base: 1.0625rem;
+  --fs-md:   1.1875rem;
+  --fs-lg:   1.375rem;
+  --fs-xl:   1.75rem;
+  --fs-2xl:  2.125rem;
+  --fs-3xl:  2.75rem;
+  --fs-4xl:  3.5rem;
+  --fs-5xl:  4.5rem;
 
-  /* Type scale on a 7px grid. Body is 17px on 28px leading, and 28 is four
-     units, so every vertical gap lands on the baseline. None of these rem
-     values appears in Tailwind's default scale, which is the point: the old
-     ladder was Tailwind's numbers under Tailwind's names. */
-  --fs-xs:   0.75rem;     /* 12 */
-  --fs-sm:   0.875rem;    /* 14 */
-  --fs-base: 1.0625rem;   /* 17, the default */
-  --fs-md:   1.25rem;     /* 20 */
-  --fs-lg:   1.5rem;      /* 24 */
-  --fs-xl:   1.75rem;     /* 28 */
-  --fs-2xl:  2.1875rem;   /* 35 */
-  --fs-3xl:  2.625rem;    /* 42 */
-  --fs-4xl:  3.5rem;      /* 56 */
-  --fs-5xl:  4.375rem;    /* 70, the measured figure */
+  --sp-1: 4px;  --sp-2: 8px;  --sp-3: 12px; --sp-4: 16px;
+  --sp-5: 20px; --sp-6: 24px; --sp-8: 32px; --sp-10: 40px;
+  --sp-12: 48px; --sp-16: 64px; --sp-20: 80px; --sp-24: 96px; --sp-32: 128px;
 
-  /* Spacing, same unit, irregular on purpose. */
-  --sp-1:  4px;
-  --sp-2:  7px;
-  --sp-3:  10px;
-  --sp-4:  14px;
-  --sp-5:  18px;
-  --sp-6:  21px;
-  --sp-8:  28px;
-  --sp-10: 35px;
-  --sp-12: 42px;
-  --sp-16: 56px;
-  --sp-20: 70px;
-  --sp-24: 84px;
-  --sp-32: 112px;
+  --container-max: 1180px;
+  --container-pad: clamp(1.25rem, 5vw, 3.5rem);
+  --nav-height:    76px;
 
-  /* Layout */
-  --container-max: 1200px;
-  --container-pad: clamp(1.25rem, 5vw, 4rem);
-  --nav-height:    84px;
-
-  /* Motion. The old curve was Tailwind's default ease-in-out. */
   --ease:     cubic-bezier(0.2, 0.62, 0.21, 1);
   --dur-fast: 120ms;
   --dur-base: 180ms;
   --dur-slow: 900ms;
 
-  /* Shape. Two radii survive: nothing, and a pill. Surfaces are square, which
-     reads as sheet metal; buttons are fully round. The contrast between the
-     two IS the system, and it replaces the uniform 16px that was on every
-     card, input and panel. */
   --radius-sm:   0;
   --radius-md:   0;
   --radius-lg:   0;
   --radius-pill: 999px;
 }
+
 
 /* ── Reset ───────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -189,7 +163,7 @@ input, textarea, select { font-family: inherit; font-size: inherit; }
 
 .section--light { background: var(--clr-bg); color: var(--clr-text); }
 .section--alt   { background: var(--clr-bg-alt); color: var(--clr-text); }
-.section--dark  { background: var(--clr-dark); color: var(--clr-text-on-dark); }
+.section--dark  { background: var(--bg-2); color: var(--ink); }
 
 /* ── Section Label ───────────────────────────────────────── */
 /* Small uppercase eyebrow. Mono, because it labels rather than asserts. */
@@ -251,13 +225,13 @@ input, textarea, select { font-family: inherit; font-size: inherit; }
 
 /* Blue fill - primary action */
 .btn--primary {
-  background: var(--ink);
-  color: var(--text-on-ink);
-  border: 1.5px solid var(--ink);
+  background: var(--violet);
+  color: var(--on-fill);
+  border: 1.5px solid var(--violet);
 }
 .btn--primary:hover {
-  background: var(--copper-700);
-  border-color: var(--copper-700);
+  background: var(--violet-deep);
+  border-color: var(--violet-deep);
 }
 
 /* White outline - on dark bg */
@@ -275,13 +249,13 @@ input, textarea, select { font-family: inherit; font-size: inherit; }
 
 /* White fill - on dark gradient bg (email CTA submit) */
 .btn--filled {
-  background: var(--paper);
-  color: var(--clr-dark);
-  border: 1.5px solid var(--text-on-ink);
+  background: var(--violet);
+  color: var(--on-fill);
+  border: 1.5px solid var(--violet);
 }
 .btn--filled:hover {
-  background: transparent;
-  color: var(--text-on-ink);
+  background: var(--violet-deep);
+  border-color: var(--violet-deep);
 }
 
 /* ── Navigation ──────────────────────────────────────────── */
@@ -360,7 +334,7 @@ input, textarea, select { font-family: inherit; font-size: inherit; }
   align-content: center;
   overflow: hidden;
   padding-top: calc(var(--nav-height) + var(--sp-24));
-  padding-bottom: 96px; /* room for the pinned marquee band */
+  padding-bottom: var(--sp-20);
   background: var(--paper);
 }
 
@@ -392,7 +366,6 @@ input, textarea, select { font-family: inherit; font-size: inherit; }
 .hero__ctas {
   display: flex;
   align-items: center;
-  justify-content: center;
   gap: var(--sp-4);
   flex-wrap: wrap;
   margin-top: var(--sp-10);
@@ -1119,6 +1092,11 @@ input, textarea, select { font-family: inherit; font-size: inherit; }
 }
 
 @media (max-width: 640px) {
+  .hero { padding-top: calc(var(--nav-height) + var(--sp-8)); padding-bottom: var(--sp-10); }
+  .hero__ctas { display: grid; gap: var(--sp-3); }
+  .hero__ctas .btn { width: 100%; }
+  .section { padding-block: var(--sp-16); }
+
   :root { --container-pad: 1.25rem; }
 
   .section { padding-block: var(--sp-16); }
@@ -1139,32 +1117,15 @@ input, textarea, select { font-family: inherit; font-size: inherit; }
    horizontal line is what makes that deliberate instead of accidental. */
 .nav__cta {
   background: transparent;
-  color: var(--text);
-  border: 1.5px solid var(--ink);
+  color: var(--violet);
+  border: 1.5px solid var(--violet);
 }
 .nav__cta:hover {
-  background: var(--ink);
-  color: var(--text-on-ink);
-  border-color: var(--ink);
+  background: var(--violet);
+  color: var(--on-fill);
+  border-color: var(--violet);
 }
 
-/* ── Copper on ink ───────────────────────────────────────── */
-/* Copper has two values: #8F4415 is tuned for paper and is nearly invisible on
-   ink at 2.54:1. Rather than override every rule that uses the accent, the
-   token is redefined on the dark containers, so every descendant inherits the
-   correct one. Found by measuring the rendered pages, not the stylesheet:
-   contrast.py checks the pairs it is told about, and this was a pair nobody
-   had thought to tell it about. */
-.section--dark,
-.cta-email,
-.service-featured,
-.about-built {
-  --clr-accent:       var(--copper-400);
-  --clr-accent-h:     var(--copper-500);
-  --clr-text:         var(--text-on-ink);
-  --clr-text-muted:   var(--text-2-on-ink);
-  --clr-border:       var(--rule-ink);
-}
 
 /* ── Reduced motion ──────────────────────────────────────── */
 /* There was no such block at all, against two unguarded infinite animations.
@@ -1202,8 +1163,9 @@ input, textarea, select { font-family: inherit; font-size: inherit; }
 .form__label--sub { font-weight: 400; font-size: var(--fs-sm); }
 .form__group--tight { gap: var(--sp-2); }
 
-/* Reversed-out text on an ink band. */
-.on-ink { color: var(--text-on-ink); }
+/* Text sitting on a violet fill. There are no dark bands any more, so this
+   is only for a swatch, never for a section. */
+.on-ink { color: var(--on-fill); }
 
 /* Spacing, named for the step rather than the pixel count, so they move with
    the scale instead of pinning it. */
@@ -1269,13 +1231,19 @@ input, textarea, select { font-family: inherit; font-size: inherit; }
   gap: var(--sp-16);
   align-items: start;
 }
-.split--hero { align-items: center; gap: var(--sp-24); }
+.split--hero {
+  grid-template-columns: minmax(0, 32rem) minmax(0, 1fr);
+  align-items: center;
+  gap: var(--sp-20);
+}
 .split__claim { min-width: 0; }
 .split__evidence { min-width: 0; }
 
 @media (max-width: 960px) {
-  .split { grid-template-columns: 1fr; gap: var(--sp-10); }
-  .split--hero { gap: var(--sp-10); }
+  .split,
+  .split--hero { grid-template-columns: 1fr; gap: var(--sp-8); }
+  /* On a phone the figure belongs under the claim it supports, not beside it. */
+  .split--hero .split__evidence { order: 2; }
 }
 
 /* ══ IDIOM 3: the measured figure ═════════════════════════
@@ -1285,9 +1253,10 @@ input, textarea, select { font-family: inherit; font-size: inherit; }
    without reading the legend. */
 .figure { margin: 0; width: max-content; max-width: 100%; }
 .figure__num {
-  font-family: var(--font-mono);
+  font-family: var(--font-sans);
   font-size: clamp(var(--fs-3xl), 8vw, var(--fs-5xl));
-  font-weight: 500;
+  font-weight: 600;
+  letter-spacing: -0.03em;
   line-height: 1;
   color: var(--clr-accent);
   font-variant-numeric: tabular-nums lining-nums;
@@ -1392,8 +1361,3 @@ input, textarea, select { font-family: inherit; font-size: inherit; }
 .model__input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
 .model__input { appearance: textfield; -moz-appearance: textfield; }
 .model__input:focus-visible { outline-offset: 4px; }
-
-/* A hero claim carries the largest type on the page, so it gets more of the
-   row than a body-copy claim does. Still asymmetric, just less severely: the
-   point of the idiom is that it is never 1fr 1fr. */
-.split--hero { grid-template-columns: minmax(0, 34rem) minmax(0, 1fr); }
