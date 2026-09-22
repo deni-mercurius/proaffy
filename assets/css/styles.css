@@ -1218,8 +1218,18 @@ input, textarea, select { font-family: inherit; font-size: inherit; }
 .ledger--outcomes .ledger__index { color: var(--clr-text-muted); }
 
 @media (max-width: 640px) {
-  .ledger__row { grid-template-columns: 1fr; gap: var(--sp-3); }
+  /* Every variant is named, not just the base. A descendant selector like
+     .ledger--outcomes .ledger__row out-specifies the base rule and keeps its
+     desktop columns on a phone no matter where it sits in the file, which is
+     how the three outcome rows ended up wrapping one word per line under a
+     figure that overlapped them. */
+  .ledger__row,
+  .ledger--time .ledger__row,
+  .ledger--outcomes .ledger__row { grid-template-columns: 1fr; gap: var(--sp-2); }
   .ledger__figure { justify-self: start; text-align: left; }
+  .ledger--outcomes .ledger__index { font-size: var(--fs-sm); }
+  .ledger--outcomes .figure__num { font-size: var(--fs-xl); }
+  .ledger__row { padding-block: var(--sp-5); }
 }
 
 /* ══ IDIOM 2: the asymmetric split ════════════════════════
@@ -1346,8 +1356,14 @@ input, textarea, select { font-family: inherit; font-size: inherit; }
 /* The projected outcomes are the least certain figures on the page, so they do
    not get to be the largest. The measured row above them stays bigger, which is
    the same argument the solid and dashed rules make, in size. */
-.ledger--outcomes .figure__num { font-size: var(--fs-2xl); }
-.ledger--outcomes .ledger__row { grid-template-columns: 6rem minmax(0, 1fr) minmax(0, 16rem); }
+/* Scoped to the desktop side rather than declared at top level. At top level
+   this has the same specificity as the mobile rule and simply comes later, so
+   source order handed the phone its desktop columns. A min-width block cannot
+   reach a phone at all, whatever the order. */
+@media (min-width: 641px) {
+  .ledger--outcomes .figure__num { font-size: var(--fs-2xl); }
+  .ledger--outcomes .ledger__row { grid-template-columns: 6rem minmax(0, 1fr) minmax(0, 16rem); }
+}
 
 /* The currency mark and its field are one unit, not two things that collide. */
 .ledger__figure {

@@ -823,6 +823,65 @@ def run():
             p.append("styles.css defines no :focus-visible ring at all")
     check(24, "nothing suppresses the focus indicator", p)
 
+    # 25 - no rule out-specifies a mobile rule
+    #
+    # A media query saying `.ledger__row { grid-template-columns: 1fr }` is
+    # beaten by `.ledger--outcomes .ledger__row` anywhere in the file, because
+    # the descendant selector is more specific. The phone then keeps the desktop
+    # columns, the content squeezes instead of overflowing, and an overflow
+    # check still passes. That shipped twice: once on the hero, once on the
+    # three outcome rows, where a label wrapped one word per line underneath a
+    # figure that overlapped it.
+    p = []
+    if os.path.isfile(css_path):
+        # Comments are stripped first. A comment sitting inside a media query
+        # is absorbed into the next selector list otherwise, which silently
+        # changes which rule this check thinks it is comparing against. That
+        # happened here, and the check passed while the defect was live.
+        css = re.sub(r"/\*.*?\*/", "", open(css_path, encoding="utf-8").read(),
+                     flags=re.S)
+
+        def spec(sel):
+            return (sel.count("#"),
+                    sel.count(".") + len(re.findall(r"\[|:(?!:)", sel)))
+
+        mq_rules = []
+        for m in re.finditer(r"@media \(max-width: (\d+)px\) \{", css):
+            depth, i = 1, m.end()
+            while i < len(css) and depth:
+                if css[i] == "{":
+                    depth += 1
+                elif css[i] == "}":
+                    depth -= 1
+                i += 1
+            for r in re.finditer(r"([^{}]+)\{([^{}]*)\}", css[m.end():i - 1]):
+                props = {x.split(":")[0].strip()
+                         for x in r.group(2).split(";") if ":" in x}
+                for sel in (x.strip() for x in r.group(1).split(",")):
+                    if sel:
+                        mq_rules.append((int(m.group(1)), sel, props))
+
+        for r in re.finditer(r"(?m)^([.#][^{\n]*?)\s*\{([^{}]*)\}", css):
+            props = {x.split(":")[0].strip()
+                     for x in r.group(2).split(";") if ":" in x}
+            for sel in (x.strip() for x in r.group(1).split(",")):
+                base = sel.split()[-1] if " " in sel else sel
+                # A desktop rule that the media query ALSO names by its full
+                # selector is fine: that is the correct way to override a
+                # variant. Only an unnamed one silently keeps its columns.
+                covered = {prop for _w, ms, mp in mq_rules if ms == sel
+                           for prop in mp}
+                for width, mq_sel, mq_props in mq_rules:
+                    shared = (props & mq_props) - covered
+                    if (mq_sel == base and sel != mq_sel
+                            and spec(sel) > spec(mq_sel) and shared):
+                        line = css[:r.start()].count(chr(10)) + 1
+                        p.append(f"styles.css:{line}: {sel!r} out-specifies "
+                                 f"{mq_sel!r} in the {width}px block for "
+                                 f"{sorted(shared)}, so a phone keeps the "
+                                 "desktop value")
+    check(25, "no rule out-specifies a mobile rule", p)
+
     return pages
 
 
