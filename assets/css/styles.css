@@ -1395,3 +1395,8 @@ input, textarea, select { font-family: inherit; font-size: inherit; }
 .model__input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
 .model__input { appearance: textfield; -moz-appearance: textfield; }
 .model__input:focus-visible { outline-offset: 4px; }
+
+/* A hero claim carries the largest type on the page, so it gets more of the
+   row than a body-copy claim does. Still asymmetric, just less severely: the
+   point of the idiom is that it is never 1fr 1fr. */
+.split--hero { grid-template-columns: minmax(0, 34rem) minmax(0, 1fr); }

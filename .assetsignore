@@ -4,3 +4,4 @@ wrangler.jsonc
 server.py
 _tools/
 _notes/
+assets/fonts/*.ttf

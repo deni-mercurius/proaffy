@@ -34,7 +34,8 @@ KEY = "5da7b2bb-24b2-42ad-96ac-7228dd4ce8d6"
 # gets no active link, which is correct for 404, privacy and terms.
 ACTIVE = {
     "index.html": "home",
-    "about.html": "about",
+    "hvac.html": "hvac",
+    "solar.html": "solar",
     "services.html": "services",
     "blog.html": "blog",
     "blog-hvac-digital-presence.html": "blog",
@@ -47,7 +48,8 @@ ACTIVE = {
 
 LINKS = [
     ("home", "/", "Home"),
-    ("about", "/about", "About"),
+    ("hvac", "/hvac", "HVAC"),
+    ("solar", "/solar", "Solar"),
     ("services", "/services", "Services"),
     ("blog", "/blog", "Blog"),
     ("contact", "/contact", "Contact"),
@@ -94,6 +96,7 @@ def nav_block(active):
 FOOTER_BLOCK = """  <footer class="footer" role="contentinfo">
     <div class="container">
       <div class="footer__inner">
+        <a href="/about" class="footer__link">About</a>
         <a href="/privacy" class="footer__link">Privacy Policy</a>
         <div>
           <span class="footer__email-label">Email</span>
@@ -162,6 +165,16 @@ CTA = {
     ),
     # These two ended on nothing at all, while seven other pages closed on the
     # same sentence. Both were the same problem: a template applied unevenly.
+    "hvac.html": (
+        "Try it on one cold snap",
+        "Run it through your next busy week and see which calls got answered that "
+        "otherwise would not have.",
+    ),
+    "solar.html": (
+        "Be the one who answered first",
+        "Put it on your next batch of quote requests and watch where the "
+        "conversations are by week three.",
+    ),
     "about.html": (
         "Find out what it does on your enquiries",
         "A month on your live leads answers the question better than another "

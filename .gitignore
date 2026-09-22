@@ -12,3 +12,6 @@ __pycache__/
 .DS_Store
 Thumbs.db
 desktop.ini
+
+# Derived from the woff2 by _tools/make-og.py, not shipped.
+assets/fonts/*.ttf

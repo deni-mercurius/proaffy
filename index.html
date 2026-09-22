@@ -32,7 +32,7 @@
   <link rel="preload" as="font" type="font/woff2" href="assets/fonts/ibm-plex-sans-400.woff2" crossorigin />
   <link rel="preload" as="font" type="font/woff2" href="assets/fonts/ibm-plex-sans-600.woff2" crossorigin />
   <link rel="stylesheet" href="assets/css/fonts.css?v=4044ff39" />
-  <link rel="stylesheet" href="assets/css/styles.css?v=e0d1a65c" />
+  <link rel="stylesheet" href="assets/css/styles.css?v=bddbb18d" />
   <script defer src="assets/js/main.js?v=b54115e2"></script>
   <!-- /chrome:assets -->
 
@@ -53,12 +53,15 @@
           "height": 512
         },
         "image": "https://proaffy.com/assets/images/og-image.png",
-        "description": "ProAffy answers and follows up the enquiries HVAC companies receive, in under 60 seconds, and books the real ones into their calendar. Also websites, local search and AI visibility.",
+        "description": "ProAffy answers and follows up the enquiries HVAC companies and solar installers receive, in under 60 seconds, and books the real ones into their calendar. Also websites, local search and AI visibility.",
         "email": "info@proaffy.com",
         "areaServed": { "@type": "Country", "name": "United States" },
         "knowsAbout": [
           "HVAC marketing",
           "HVAC lead generation",
+          "Solar marketing",
+          "Solar lead generation",
+          "Speed to lead",
           "Lead follow-up automation",
           "Search engine optimization",
           "Generative engine optimization",
@@ -158,7 +161,8 @@
 
       <nav class="nav__links" aria-label="Main navigation">
         <a href="/" class="nav__link active">Home</a>
-        <a href="/about" class="nav__link">About</a>
+        <a href="/hvac" class="nav__link">HVAC</a>
+        <a href="/solar" class="nav__link">Solar</a>
         <a href="/services" class="nav__link">Services</a>
         <a href="/blog" class="nav__link">Blog</a>
         <a href="/contact" class="nav__link">Contact</a>
@@ -175,7 +179,8 @@
   <!-- Mobile menu -->
   <nav class="nav__mobile-menu" id="mobileMenu" aria-label="Mobile navigation">
     <a href="/" class="nav__mobile-link">Home</a>
-    <a href="/about" class="nav__mobile-link">About</a>
+    <a href="/hvac" class="nav__mobile-link">HVAC</a>
+    <a href="/solar" class="nav__mobile-link">Solar</a>
     <a href="/services" class="nav__mobile-link">Services</a>
     <a href="/blog" class="nav__mobile-link">Blog</a>
     <a href="/contact" class="nav__mobile-link">Contact</a>
@@ -423,6 +428,41 @@
       </div>
     </section>
 
+
+    <section class="section section--alt" aria-labelledby="who-heading">
+      <div class="container split">
+        <div class="split__claim">
+          <span class="section-label">Who this is for</span>
+          <h2 class="h2" id="who-heading">Two trades, one problem</h2>
+        </div>
+        <div class="split__evidence">
+          <p class="prose">
+            The mechanism does not change with the trade. What changes is the vocabulary, the
+            questions worth asking first, and how long the conversation runs before anybody
+            signs anything.
+          </p>
+          <ul class="ledger" role="list">
+            <li class="ledger__row" role="listitem">
+              <span class="ledger__index" aria-hidden="true">01</span>
+              <span class="ledger__title">
+                <a href="/hvac">For HVAC companies</a>
+                <span class="ledger__note">A no-heat call at six in the evening, answered before
+                  they work down the list.</span>
+              </span>
+            </li>
+            <li class="ledger__row" role="listitem">
+              <span class="ledger__index" aria-hidden="true">02</span>
+              <span class="ledger__title">
+                <a href="/solar">For solar installers</a>
+                <span class="ledger__note">A quote request that went to three other companies in
+                  the same sitting, and a decision measured in weeks.</span>
+              </span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
     <!-- ── FAQ ────────────────────────────────────────────── -->
     <section class="section section--alt" aria-labelledby="faq-heading">
       <div class="container">
@@ -549,6 +589,7 @@
   <footer class="footer" role="contentinfo">
     <div class="container">
       <div class="footer__inner">
+        <a href="/about" class="footer__link">About</a>
         <a href="/privacy" class="footer__link">Privacy Policy</a>
         <div>
           <span class="footer__email-label">Email</span>

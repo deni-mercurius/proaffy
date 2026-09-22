@@ -1,17 +1,17 @@
 # ProAffy
 
-> ProAffy is an HVAC growth partner that helps HVAC companies across the USA book more jobs. Our flagship system, the ThermoGrowth Engine, responds to every lead within 60 seconds, follows up until they book, and fills the calendar with qualified jobs. We also build high-converting websites and handle SEO and GEO. Any guarantee is agreed in writing before work begins.
+> ProAffy answers and follows up the enquiries HVAC companies and solar installers receive, so fewer of them go cold before anybody replies. Our flagship system, the ThermoGrowth Engine, responds to every lead within 60 seconds, follows up until they book, and fills the calendar with qualified jobs. We also build high-converting websites and handle SEO and GEO. Any guarantee is agreed in writing before work begins.
 
 ## What ProAffy does
 
 - **The ThermoGrowth Engine** (flagship): a done-for-you system that generates HVAC leads, contacts every lead within 60 seconds, filters out time-wasters, books qualified appointments straight into the calendar, and follows up automatically until a lead books or says no. It also sends reminders that cut no-shows and requests reviews after each job.
-- **Websites**: fast, mobile-first HVAC websites built to turn visitors into booked calls.
-- **SEO**: local SEO to rank in your service area and win the Google map pack for "near me" searches.
-- **GEO (Generative Engine Optimization)**: getting your HVAC company cited and recommended by AI tools like ChatGPT, Gemini, and Google AI Overviews.
+- **Websites**: fast, mobile-first sites for HVAC companies and solar installers, built to turn visitors into booked calls.
+- **SEO**: local SEO to rank in your service area and win the Google map pack for "near me" searches, for either trade.
+- **GEO (Generative Engine Optimization)**: getting your company cited and recommended by AI tools like ChatGPT, Gemini, and Google AI Overviews.
 
 ## Key facts
 
-- Serves: HVAC companies in the United States.
+- Serves: HVAC companies and solar installers in the United States.
 - Results: depend on enquiry volume and average job value, so the site models them from figures the visitor enters rather than quoting an average. No published client results.
 - Lead response time: within 60 seconds, day or night. This is how the sequence is configured, not an average across clients.
 - Reminders are sent before each appointment to reduce no-shows. No measured rate is published.
@@ -21,6 +21,8 @@
 ## Key pages
 
 - Home: https://proaffy.com/
+- For HVAC companies: https://proaffy.com/hvac
+- For solar installers: https://proaffy.com/solar
 - Services: https://proaffy.com/services
 - About: https://proaffy.com/about
 - Contact / free pilot: https://proaffy.com/contact
