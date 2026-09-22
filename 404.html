@@ -28,7 +28,7 @@
   <link rel="preload" as="font" type="font/woff2" href="assets/fonts/ibm-plex-sans-400.woff2" crossorigin />
   <link rel="preload" as="font" type="font/woff2" href="assets/fonts/ibm-plex-sans-600.woff2" crossorigin />
   <link rel="stylesheet" href="assets/css/fonts.css?v=f688352a" />
-  <link rel="stylesheet" href="assets/css/styles.css?v=d60b505b" />
+  <link rel="stylesheet" href="assets/css/styles.css?v=a1369bd2" />
   <script defer src="assets/js/main.js?v=b54115e2"></script>
   <!-- /chrome:assets -->
 
@@ -115,13 +115,40 @@
   <footer class="footer" role="contentinfo">
     <div class="container">
       <div class="footer__inner">
-        <a href="/about" class="footer__link">About</a>
-        <a href="/privacy" class="footer__link">Privacy Policy</a>
-        <div>
-          <span class="footer__email-label">Email</span>
-          <a href="mailto:info@proaffy.com" class="footer__email-addr">info@proaffy.com</a>
+
+        <div class="footer__brand">
+          <a href="/" class="footer__logo" aria-label="ProAffy home">
+            <img src="assets/images/logo-136.png" alt="ProAffy logo" width="52" height="52" />
+          </a>
+          <p class="footer__line">Lead response and marketing for HVAC and solar contractors.</p>
+          <a href="mailto:info@proaffy.com" class="footer__email">info@proaffy.com</a>
         </div>
-        <a href="/terms" class="footer__link">Terms of Service</a>
+
+        <nav class="footer__col" aria-label="Footer, what we do">
+          <p class="footer__heading">What we do</p>
+          <div class="footer__list">
+            <a href="/hvac" class="footer__link">HVAC</a>
+            <a href="/solar" class="footer__link">Solar</a>
+            <a href="/services" class="footer__link">Services</a>
+            <a href="/blog" class="footer__link">Blog</a>
+            <a href="/contact" class="footer__link">Contact</a>
+          </div>
+        </nav>
+
+        <nav class="footer__col" aria-label="Footer, company">
+          <p class="footer__heading">Company</p>
+          <div class="footer__list">
+            <a href="/about" class="footer__link">About</a>
+            <a href="/privacy" class="footer__link">Privacy Policy</a>
+            <a href="/terms" class="footer__link">Terms of Service</a>
+          </div>
+        </nav>
+
+      </div>
+
+      <div class="footer__legal">
+        <p class="footer__copy">&copy; 2026 ProAffy</p>
+        <p class="footer__copy">Figures on this site are models, not client results.</p>
       </div>
     </div>
   </footer>

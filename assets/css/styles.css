@@ -112,7 +112,16 @@
 /* ── Reset ───────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+/* scroll-padding-top is not decoration. The nav is position:fixed at 76px, so
+   without it the browser scrolls an anchor target to y=0 and the nav covers
+   the first 76px of it. Measured: every in-page anchor on the site, at 390px
+   and 1440px, landed its own heading underneath the bar. That includes the
+   skip link, which is the one navigation aid a keyboard user has. */
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: calc(var(--nav-height) + var(--sp-4));
+  -webkit-text-size-adjust: 100%;
+}
 
 body {
   font-family: var(--font-body);
@@ -247,7 +256,9 @@ input, textarea, select { font-family: inherit; font-size: inherit; }
   color: var(--text-on-ink);
 }
 
-/* White fill - on dark gradient bg (email CTA submit) */
+/* The email CTA submit. The comment here used to say "white fill on dark
+   gradient bg", which described a button and a background that both went with
+   the dark design. It is a violet fill on the light tint now. */
 .btn--filled {
   background: var(--violet);
   color: var(--on-fill);
@@ -309,15 +320,26 @@ input, textarea, select { font-family: inherit; font-size: inherit; }
 
 .nav__cta { font-size: var(--fs-base); padding: var(--sp-2) var(--sp-6); }
 
+/* The box is 48px; the three bars are 28px inside it. Measured at 28x16, which
+   is the entire navigation on a phone inside a target a third of the size a
+   thumb needs. The bars are what you see, the padding is what you hit, and
+   margin-right pulls the optical edge back to the container so the larger box
+   does not read as a misaligned icon. */
 .nav__hamburger {
   display: none;
   flex-direction: column;
+  justify-content: center;
+  align-items: center;
   gap: 5px;
-  width: 28px;
+  width: 48px;
+  height: 48px;
+  margin-right: -10px;
+  background: none;
+  border: 0;
   cursor: pointer;
 }
 .nav__hamburger span {
-  display: block; height: 2px;
+  display: block; height: 2px; width: 28px;
   background: var(--clr-text);
   transition: transform var(--dur-base) var(--ease), opacity var(--dur-base) var(--ease);
 }
@@ -545,39 +567,63 @@ input, textarea, select { font-family: inherit; font-size: inherit; }
   line-height: 1.4;
 }
 
-.section--dark .checklist__item { color: var(--clr-text-on-dark); }
-.section--dark .checklist__item::before { color: var(--clr-accent); }
+/* .section--dark is a light surface now, so --clr-text-on-dark here was white
+   on #F4F3F8. No page currently puts a checklist in one, so nothing was
+   invisible, but the next person to add one would have found out the hard way. */
+.section--dark .checklist__item { color: var(--ink); }
+.section--dark .checklist__item::before { color: var(--violet); }
 /* ── Email CTA ───────────────────────────────────────────── */
+/* This was the last dark band on the site and it closed every page, which made
+   the claim at the top of this file ("Light throughout. There are no dark
+   bands.") false in the one place a visitor was guaranteed to reach. It is now
+   the lightest violet tint in the palette: still a panel, still clearly the end
+   of the document, and the logo's own hue rather than a slab of near-black.
+
+   Left-aligned, like everything else here. A centred heading over a centred
+   input and a centred button is the exact shape every generated landing page
+   ends on, and it was the only centred block left. */
 .cta-email {
   position: relative;
-  overflow: hidden;
-  padding-block: var(--sp-24);
-  text-align: center;
-  background: var(--ink);
-  border-top: 2px solid var(--copper-400);
+  padding-block: var(--sp-20);
+  background: var(--violet-wash);
+  border-top: 2px solid var(--violet);
 }
-
 
 .cta-email__content {
   position: relative;
-  z-index: 1;
-  max-width: 640px;
+  max-width: var(--container-max);
   margin-inline: auto;
   padding-inline: var(--container-pad);
+}
+
+/* The same claim-against-evidence split every other section on this site uses.
+   Without it the closing block was a short left-aligned stack with half the
+   band empty beside it, which is the one place the document idiom broke down.
+   min-width, so it cannot reach a phone whatever the source order. */
+@media (min-width: 961px) {
+  .cta-email__content {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    column-gap: var(--sp-16);
+    align-items: start;
+  }
+  .cta-email__sub { margin-bottom: 0; }
 }
 
 .cta-email__heading {
   font-family: var(--font-accent);
   font-size: clamp(var(--fs-2xl), 5vw, var(--fs-3xl));
   font-weight: 600;
-  color: var(--text-on-ink);
-  line-height: 1.2;
+  color: var(--ink);
+  line-height: 1.15;
+  max-width: 20ch;
   margin-bottom: var(--sp-4);
 }
 
 .cta-email__sub {
   font-size: var(--fs-md);
-  color: rgba(242,240,235,0.72);
+  color: var(--muted);
+  max-width: 54ch;
   margin-bottom: var(--sp-8);
   line-height: 1.6;
 }
@@ -585,7 +631,6 @@ input, textarea, select { font-family: inherit; font-size: inherit; }
 .cta-email__form {
   display: flex;
   align-items: stretch;
-  justify-content: center;
   gap: var(--sp-3);
   flex-wrap: wrap;
 }
@@ -595,28 +640,30 @@ input, textarea, select { font-family: inherit; font-size: inherit; }
   min-width: 220px;
   max-width: 340px;
   padding: var(--sp-4);
-  background: rgba(242,240,235,0.1);
-  border: 1.5px solid rgba(242,240,235,0.25);
-  color: var(--text-on-ink);
+  background: var(--bg);
+  border: 1.5px solid var(--rule);
+  color: var(--ink);
   font-size: var(--fs-base);
   border-radius: var(--radius-sm);
   transition: border-color var(--dur-base) var(--ease);
 }
-.cta-email__input::placeholder { color: rgba(242,240,235,0.4); }
-.cta-email__input:focus { border-color: rgba(242,240,235,0.65); }
+.cta-email__input::placeholder { color: var(--muted); }
+.cta-email__input:focus { border-color: var(--violet); }
 
 .cta-email__contact {
   margin-top: var(--sp-8);
   font-size: var(--fs-sm);
-  color: rgba(242,240,235,0.55);
+  color: var(--muted);
 }
 
 .cta-email__contact a {
-  color: rgba(242,240,235,0.8);
+  display: inline-block;
+  padding-block: var(--sp-2);
+  color: var(--violet);
   text-decoration: underline;
   text-underline-offset: 3px;
 }
-.cta-email__contact a:hover { color: var(--text-on-ink); }
+.cta-email__contact a:hover { color: var(--violet-deep); }
 
 /* ── About Page ──────────────────────────────────────────── */
 .page-header {
@@ -804,8 +851,11 @@ input, textarea, select { font-family: inherit; font-size: inherit; }
 }
 .blog-card__dot { color: var(--text-2); }
 
+/* A standalone call to action, not a link inside a sentence, so the inline
+   exception does not cover it and the padding is the tap target. */
 .blog-card__link {
   align-self: flex-start;
+  padding-block: var(--sp-3);
   font-family: var(--font-accent);
   font-size: var(--fs-sm);
   font-weight: 600;
@@ -1009,46 +1059,86 @@ input, textarea, select { font-family: inherit; font-size: inherit; }
 
 /* 3-up variant of the blog grid (home "From the Blog") */
 /* ── Footer ──────────────────────────────────────────────── */
+/* The footer is the last thing on every page and, on a 10,000px homepage, the
+   place a visitor ends up when they have finished reading. The one it replaced
+   was built for a dark band that no longer exists and offered four links out of
+   a 16-page site. It now carries the whole nav.
+
+   Left-aligned on purpose. Everything else on this site is set as a document,
+   and a centred footer under left-aligned pages is the join nobody designed. */
 .footer {
-  background: var(--clr-dark);
-  border-top: 1px solid var(--clr-border-dark);
-  padding-block: var(--sp-10);
+  background: var(--bg-2);
+  border-top: 2px solid var(--violet);
+  padding-block: var(--sp-12) var(--sp-6);
 }
 
 .footer__inner {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  align-items: center;
-  gap: var(--sp-6);
-  text-align: center;
+  grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--sp-10) var(--sp-8);
+  align-items: start;
 }
 
-.footer__link {
+.footer__logo { display: inline-block; line-height: 0; }
+.footer__logo img { width: 52px; height: 52px; }
+
+.footer__line {
+  margin-top: var(--sp-4);
+  max-width: 30ch;
   font-size: var(--fs-sm);
-  color: var(--clr-text-muted-dark);
+  color: var(--muted);
+}
+
+.footer__email {
+  display: inline-block;
+  margin-top: var(--sp-1);
+  padding-block: var(--sp-3);
+  font-size: var(--fs-base);
+  font-weight: 600;
+  color: var(--violet);
   text-decoration: underline;
   text-underline-offset: 3px;
-  transition: color var(--dur-base) var(--ease);
 }
-.footer__link:hover { color: var(--text-on-ink); }
+.footer__email:hover { color: var(--violet-deep); }
 
-.footer__email-label {
-  font-family: var(--font-display);
+.footer__heading {
   font-size: var(--fs-xs);
-  font-weight: 500;
-  letter-spacing: 0.2em;
+  font-weight: 600;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--clr-text-muted-dark);
-  display: block;
-  margin-bottom: var(--sp-1);
+  color: var(--muted);
+  margin-bottom: var(--sp-2);
 }
 
-.footer__email-addr {
+.footer__list { display: grid; }
+
+/* The padding is the tap target, not decoration. At the old 24px these sat
+   under every guideline going, stacked directly on top of each other. 12px
+   top and bottom takes a 24px line to a 48px row. A pointer does not need
+   that, so the desktop side tightens it back in the min-width block below. */
+.footer__link {
+  padding-block: var(--sp-3);
   font-size: var(--fs-sm);
-  color: var(--clr-text-muted-dark);
+  color: var(--ink);
+  text-decoration: none;
   transition: color var(--dur-base) var(--ease);
 }
-.footer__email-addr:hover { color: var(--text-on-ink); }
+.footer__link:hover { color: var(--violet); text-decoration: underline; text-underline-offset: 3px; }
+
+.footer__legal {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--sp-2) var(--sp-6);
+  margin-top: var(--sp-10);
+  padding-top: var(--sp-5);
+  border-top: 1px solid var(--rule);
+}
+.footer__copy { font-size: var(--fs-xs); color: var(--muted); }
+
+@media (min-width: 961px) {
+  .footer__link { padding-block: var(--sp-2); }
+}
 
 /* ── Mobile Nav ──────────────────────────────────────────── */
 .nav__mobile-menu {
@@ -1088,7 +1178,14 @@ input, textarea, select { font-family: inherit; font-size: inherit; }
 
   .blog-grid { grid-template-columns: 1fr; }
 
-  .footer__inner { grid-template-columns: 1fr; }
+  /* The brand takes the full width, the two link columns stay side by side.
+     Stacking all three makes the footer taller than the phone screen for no
+     gain: two short lists fit across 390px comfortably. */
+  .footer__inner {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--sp-8) var(--sp-6);
+  }
+  .footer__brand { grid-column: 1 / -1; }
 }
 
 @media (max-width: 640px) {

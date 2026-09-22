@@ -690,7 +690,7 @@ def run():
         js_v = chrome.version(os.path.join(ROOT, "assets", "js", "main.js"))
         fonts_v = chrome.version(os.path.join(ROOT, "assets", "css", "fonts.css"))
         wanted = {
-            "footer": chrome.FOOTER_BLOCK,
+            "footer": chrome.footer_block(),
             "assets": chrome.assets_block(css_v, js_v, fonts_v),
         }
         for name, pg in pages.items():
@@ -881,6 +881,85 @@ def run():
                                  f"{sorted(shared)}, so a phone keeps the "
                                  "desktop value")
     check(25, "no rule out-specifies a mobile rule", p)
+
+    # 26 - a fixed bar needs scroll-padding-top
+    #
+    # .nav is position:fixed at 76px. Without scroll-padding-top on the
+    # scrolling element the browser scrolls an anchor target to y=0 and the bar
+    # covers the first 76px of it. Measured on this site before the fix: every
+    # in-page anchor, at 390px and at 1440px, landed its own heading underneath
+    # the bar, including the skip link, which is the one navigation aid a
+    # keyboard user has. It is a one-line fix that nothing else would catch,
+    # because the page has no overflow and full contrast while it is wrong.
+    p = []
+    if os.path.isfile(css_path):
+        css = re.sub(r"/\*.*?\*/", "", open(css_path, encoding="utf-8").read(),
+                     flags=re.S)
+        fixed_bar = re.search(
+            r"\.nav\s*\{[^{}]*position:\s*(?:fixed|sticky)", css)
+        if fixed_bar and "scroll-padding-top" not in css:
+            p.append("styles.css: .nav is position:fixed but nothing sets "
+                     "scroll-padding-top, so every #anchor lands its target "
+                     "under the bar")
+    check(26, "a fixed nav is paid for with scroll-padding-top", p)
+
+    # 27 - the site stays light
+    #
+    # The owner's instruction was "don't make it dark, light is better". The
+    # token block says "Light throughout. There are no dark bands." Both were
+    # true of every page except the closing CTA, which was background:var(--ink)
+    # and closed all sixteen of them. A comment is not an enforcement mechanism,
+    # so this resolves each background declaration through the token aliases and
+    # measures it.
+    p = []
+    if os.path.isfile(css_path):
+        css = re.sub(r"/\*.*?\*/", "", open(css_path, encoding="utf-8").read(),
+                     flags=re.S)
+        tokens = dict(re.findall(r"(--[a-z0-9-]+):\s*([^;]+);", css))
+
+        def resolve(value, depth=0):
+            value = value.strip()
+            m = re.fullmatch(r"var\((--[a-z0-9-]+)\)", value)
+            if m and depth < 8:
+                return resolve(tokens.get(m.group(1), ""), depth + 1)
+            return value
+
+        def luminance(hexcode):
+            r, g, b = (int(hexcode[i:i + 2], 16) / 255 for i in (1, 3, 5))
+            def f(v):
+                return v / 12.92 if v <= 0.03928 else ((v + 0.055) / 1.055) ** 2.4
+            return 0.2126 * f(r) + 0.7152 * f(g) + 0.0722 * f(b)
+
+        # Only band-level surfaces. A violet button and a 2px underline are
+        # both "dark" by luminance and neither is what the instruction was
+        # about; flagging them would have made this check noise, and a noisy
+        # check gets loosened. The names below are the full-bleed blocks.
+        band = re.compile(
+            r"(?:^|[\s,])(?:body|\.(?:section|hero|cta-|footer|band|page-)"
+            r"[a-z0-9_-]*)$")
+
+        for m in re.finditer(r"(?m)^([a-z.#][^{\n]*?)\s*\{([^{}]*)\}", css):
+            for sel in (x.strip() for x in m.group(1).split(",")):
+                # Strip pseudo-classes and pseudo-elements: :hover is a state,
+                # ::after is a 2px rule, neither is a band.
+                bare = re.sub(r"::?[a-z-]+(?:\([^)]*\))?", "", sel).strip()
+                if not band.search(bare) or bare != sel:
+                    continue
+                for decl in m.group(2).split(";"):
+                    if ":" not in decl:
+                        continue
+                    prop, _, raw = decl.partition(":")
+                    if prop.strip() not in ("background", "background-color"):
+                        continue
+                    val = resolve(raw)
+                    if not re.fullmatch(r"#[0-9a-fA-F]{6}", val):
+                        continue
+                    if luminance(val) < 0.18:
+                        line = css[:m.start()].count(chr(10)) + 1
+                        p.append(f"styles.css:{line}: {sel!r} paints a dark "
+                                 f"band ({raw.strip()} -> {val}). The site is "
+                                 "light; carry emphasis with the violet tint.")
+    check(27, "no dark bands", p)
 
     return pages
 

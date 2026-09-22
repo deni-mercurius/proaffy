@@ -94,16 +94,70 @@ def nav_block(active):
   </nav>"""
 
 
-FOOTER_BLOCK = """  <footer class="footer" role="contentinfo">
+# The footer's own links, which are not in the nav. Kept separate rather than
+# merged into LINKS so that adding a nav item does not silently add a footer
+# column, and removing one does not orphan /privacy.
+FOOTER_LEGAL = [
+    ("/about", "About"),
+    ("/privacy", "Privacy Policy"),
+    ("/terms", "Terms of Service"),
+]
+
+# Hardcoded, not datetime.now().year. Deriving it would mean that merely running
+# this tool in January rewrites all 16 files, which is a diff nobody asked for
+# and a deploy nobody reviewed.
+YEAR = "2026"
+
+
+def footer_block():
+    """The last thing on every page, so it carries the navigation the nav does.
+
+    What it replaced was a three-column centred grid built for a dark band that
+    no longer exists: it rendered light using dark-band tokens, offered four
+    links out of a 16-page site, and on a phone collapsed into one column that
+    put the email address in between Privacy Policy and Terms of Service,
+    because that is the source order. None of the six nav destinations were
+    reachable from the bottom of a 10,000px page.
+    """
+    pages = "\n".join(
+        f'            <a href="{href}" class="footer__link">{label}</a>'
+        for key, href, label in LINKS if key != "home"
+    )
+    legal = "\n".join(
+        f'            <a href="{href}" class="footer__link">{label}</a>'
+        for href, label in FOOTER_LEGAL
+    )
+    return f"""  <footer class="footer" role="contentinfo">
     <div class="container">
       <div class="footer__inner">
-        <a href="/about" class="footer__link">About</a>
-        <a href="/privacy" class="footer__link">Privacy Policy</a>
-        <div>
-          <span class="footer__email-label">Email</span>
-          <a href="mailto:info@proaffy.com" class="footer__email-addr">info@proaffy.com</a>
+
+        <div class="footer__brand">
+          <a href="/" class="footer__logo" aria-label="ProAffy home">
+            <img src="assets/images/logo-136.png" alt="ProAffy logo" width="52" height="52" />
+          </a>
+          <p class="footer__line">Lead response and marketing for HVAC and solar contractors.</p>
+          <a href="mailto:info@proaffy.com" class="footer__email">info@proaffy.com</a>
         </div>
-        <a href="/terms" class="footer__link">Terms of Service</a>
+
+        <nav class="footer__col" aria-label="Footer, what we do">
+          <p class="footer__heading">What we do</p>
+          <div class="footer__list">
+{pages}
+          </div>
+        </nav>
+
+        <nav class="footer__col" aria-label="Footer, company">
+          <p class="footer__heading">Company</p>
+          <div class="footer__list">
+{legal}
+          </div>
+        </nav>
+
+      </div>
+
+      <div class="footer__legal">
+        <p class="footer__copy">&copy; {YEAR} ProAffy</p>
+        <p class="footer__copy">Figures on this site are models, not client results.</p>
       </div>
     </div>
   </footer>"""
@@ -197,39 +251,49 @@ CTA = {
 def cta_block(name):
     heading, sub = CTA[name]
     slug = "/" if name == "index.html" else "/" + name[:-5]
+    # Two wrappers, so the desktop split is two grid children rather than six
+    # explicitly placed ones. The confirmation panel is display:none until
+    # :target, and placing it by grid-row would have overlapped the form the
+    # moment it appeared.
     return f"""  <section class="cta-email" aria-labelledby="cta-heading">
     <div class="cta-email__content">
-      <h2 class="cta-email__heading" id="cta-heading">{heading}</h2>
-      <p class="cta-email__sub">{sub}</p>
 
-      <div class="form-sent" id="sent" role="status">
-        <p class="form-sent__title">Thank you. Your message reached us.</p>
-        <p>We reply within one business day. If it is urgent, email
-          <a href="mailto:info@proaffy.com">info@proaffy.com</a>.</p>
+      <div class="cta-email__claim">
+        <h2 class="cta-email__heading" id="cta-heading">{heading}</h2>
+        <p class="cta-email__sub">{sub}</p>
       </div>
 
-      <form class="cta-email__form" id="ctaEmailForm"
-            action="https://api.web3forms.com/submit" method="POST">
-        <input type="hidden" name="access_key" value="{KEY}" />
-        <input type="hidden" name="subject" value="Free pilot request from proaffy.com" />
-        <input type="hidden" name="redirect" value="https://proaffy.com{slug}?sent=1#sent" />
-        <input type="checkbox" name="botcheck" class="hp" tabindex="-1"
-               autocomplete="off" aria-hidden="true" />
-        <input
-          type="email"
-          name="email"
-          class="cta-email__input"
-          placeholder="Email Address..."
-          aria-label="Email address"
-          required
-        />
-        <button type="submit" class="btn btn--filled">Book Your Free Pilot</button>
-      </form>
+      <div class="cta-email__act">
+        <div class="form-sent" id="sent" role="status">
+          <p class="form-sent__title">Thank you. Your message reached us.</p>
+          <p>We reply within one business day. If it is urgent, email
+            <a href="mailto:info@proaffy.com">info@proaffy.com</a>.</p>
+        </div>
 
-      <p class="cta-email__contact">
-        <span>Or email us directly:</span>
-        <a href="mailto:info@proaffy.com">info@proaffy.com</a>
-      </p>
+        <form class="cta-email__form" id="ctaEmailForm"
+              action="https://api.web3forms.com/submit" method="POST">
+          <input type="hidden" name="access_key" value="{KEY}" />
+          <input type="hidden" name="subject" value="Free pilot request from proaffy.com" />
+          <input type="hidden" name="redirect" value="https://proaffy.com{slug}?sent=1#sent" />
+          <input type="checkbox" name="botcheck" class="hp" tabindex="-1"
+                 autocomplete="off" aria-hidden="true" />
+          <input
+            type="email"
+            name="email"
+            class="cta-email__input"
+            placeholder="Email Address..."
+            aria-label="Email address"
+            required
+          />
+          <button type="submit" class="btn btn--filled">Book Your Free Pilot</button>
+        </form>
+
+        <p class="cta-email__contact">
+          <span>Or email us directly:</span>
+          <a href="mailto:info@proaffy.com">info@proaffy.com</a>
+        </p>
+      </div>
+
     </div>
   </section>"""
 
@@ -319,7 +383,7 @@ def main():
     js_v = version(os.path.join(ROOT, "assets", "js", "main.js"))
     fonts_v = version(os.path.join(ROOT, "assets", "css", "fonts.css"))
 
-    bodies = {"footer": FOOTER_BLOCK,
+    bodies = {"footer": footer_block(),
               "assets": assets_block(css_v, js_v, fonts_v)}
 
     stale, written, problems = [], [], []
