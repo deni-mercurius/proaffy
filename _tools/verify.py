@@ -84,6 +84,31 @@ PERFORMED_GOOD = [
     "a booked appointment that no-shows costs you a truck roll",
 ]
 
+# Figures that were invented, removed, and must not come back.
+#
+# Removed once and found again twice, because the first sweeps matched whole
+# sentences and the figures had been reworded around them. Match the NUMBER,
+# never the sentence it happens to sit in today.
+RETIRED = [
+    (r"\$ ?3,?477", "an invented monthly loss figure no source produces",
+     "bleeding $3,477 a month"),
+    (r"\$ ?23,?000", "an invented revenue figure that appeared on one page only",
+     "worth an extra $23,000"),
+    (r"\b11 (?:new|booked)\b", "the invented jobs-per-month figure",
+     "an average of 11 new jobs"),
+    (r"15\s*%[^.]{0,24}7\s*%", "the invented no-show range",
+     "cut from 15% down to 7%"),
+    (r"guarantee[ds]?\s*,?\s*or you don'?t pay",
+     "an unconditional guarantee the Terms page calls illustrative",
+     "results guaranteed or you don't pay"),
+]
+
+RETIRED_GOOD = [
+    "we answer 11 enquiries an hour",          # 11 followed by neither word
+    "a guarantee is agreed with you in writing",
+    "the reply takes 42 hours on average",
+]
+
 # Built with chr() rather than escape sequences, and rather than the characters
 # themselves. An escape can be mangled in transit by a shell heredoc, and the
 # literal character would put an em dash inside the file that bans em dashes.
@@ -109,6 +134,30 @@ PLACEHOLDER = re.compile(r"[A-Z0-9_]*PLACEHOLDER[A-Z0-9_]*|REPLACE_ME|YOUR_KEY_H
 def prove_patterns():
     """Exit 2 if any pattern has gone blind. This runs before anything else."""
     blind = []
+
+    # A control character inside a pattern is how a gate goes silently blind.
+    # A shell heredoc eats one level of backslash, so a `\b` written in a
+    # generating script arrives as byte 0x08 and the pattern then matches
+    # nothing while still looking correct in an editor. This has happened in
+    # this file: the retired-figures check shipped with two backspace bytes and
+    # could not match the figure it was written to catch.
+    for label, pats in (("performed-insight", [p for p, _w in PERFORMED]),
+                        ("retired-figure", [p for p, _w, _s in RETIRED])):
+        for pat in pats:
+            bad = [hex(ord(c)) for c in pat if ord(c) < 32]
+            if bad:
+                blind.append(f"{label} pattern contains a control character "
+                             f"{bad}: {pat!r}. A heredoc ate a backslash.")
+
+    for pat, _why, sample in RETIRED:
+        rx = re.compile(pat, re.I)
+        if not rx.search(sample):
+            blind.append(f"retired-figure pattern matches its own sample: {pat!r}")
+        for good in RETIRED_GOOD:
+            if rx.search(good):
+                blind.append(f"retired-figure pattern fires on clean copy: "
+                             f"{pat!r} -> {good!r}")
+
     for pat, _why in PERFORMED:
         rx = re.compile(pat, re.I)
         if not any(rx.search(s) for s in PERFORMED_BAD):
@@ -310,7 +359,7 @@ def run():
             p.append(f"{name}: no meta description")
         elif not 70 <= len(pg.description) <= 170:
             p.append(f"{name}: description is {len(pg.description)} chars, want 70-170")
-    check(1, "title 20-65 chars, description 70-170", p, pending="S4")
+    check(1, "title 20-65 chars, description 70-170", p)
 
     # 2 - titles and descriptions unique
     p = []
@@ -698,6 +747,21 @@ def run():
                 p.append(f"{name}: the answer to {vq[:38]!r} differs between "
                          "the page and its structured data")
     check(21, "FAQ structured data matches the visible questions", p)
+
+    # 22 - figures that were invented, and must not come back.
+    # The patterns live at module level so prove_patterns() can exercise
+    # them against a known-bad sample before anything is scanned.
+    p = []
+    sources = {name: pg.raw for name, pg in pages.items()}
+    for extra in ("llms.txt", "site.webmanifest", "robots.txt"):
+        fp = os.path.join(ROOT, extra)
+        if os.path.isfile(fp):
+            sources[extra] = open(fp, encoding="utf-8").read()
+    for name, text in sources.items():
+        for pat, why, _sample in RETIRED:
+            for m in re.finditer(pat, text, re.I):
+                p.append(f"{name}: {m.group(0)!r} is {why}")
+    check(22, "retired figures stay retired", p)
 
     return pages
 

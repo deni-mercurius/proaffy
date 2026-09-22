@@ -1,6 +1,6 @@
 # ProAffy
 
-> ProAffy is an HVAC growth partner that helps HVAC companies across the USA book more jobs. Our flagship system, the ThermoGrowth Engine, responds to every lead within 60 seconds, follows up until they book, and fills the calendar with qualified jobs. We also build high-converting websites and handle SEO and GEO. Results are guaranteed or you don't pay.
+> ProAffy is an HVAC growth partner that helps HVAC companies across the USA book more jobs. Our flagship system, the ThermoGrowth Engine, responds to every lead within 60 seconds, follows up until they book, and fills the calendar with qualified jobs. We also build high-converting websites and handle SEO and GEO. Any guarantee is agreed in writing before work begins.
 
 ## What ProAffy does
 
@@ -12,10 +12,10 @@
 ## Key facts
 
 - Serves: HVAC companies in the United States.
-- Typical results: an average of 11 new booked jobs per month, worth roughly $23,000 in extra revenue, plus about $3,477 per month recovered from cold leads.
-- Lead response time: within 60 seconds, day or night.
-- No-show rate: reduced from about 15% to about 7% with automated reminders.
-- Guarantee: guaranteed or you don't pay. Proven with a free pilot before you commit.
+- Results: depend on enquiry volume and average job value, so the site models them from figures the visitor enters rather than quoting an average. No published client results.
+- Lead response time: within 60 seconds, day or night. This is how the sequence is configured, not an average across clients.
+- Reminders are sent before each appointment to reduce no-shows. No measured rate is published.
+- Guarantee: agreed in writing before work begins. A free pilot runs first, on live enquiries.
 - No new software to learn and no extra office staff to hire. ProAffy builds, installs, and runs everything.
 
 ## Key pages
