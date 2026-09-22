@@ -48,40 +48,53 @@ def check(num, title, problems, pending=None):
 # so every pattern is exercised before the site is scanned.
 # ─────────────────────────────────────────────────────────────
 
+# Contractions are not optional here. This site's copy uses them throughout, so
+# a pattern written only for "it is" misses "it's" and the check quietly does
+# nothing. That is not hypothetical: these patterns passed for four sessions
+# while a heading read "The Real Problem Isn't Leads. It's Follow-Up.", which is
+# the exact construction they exist to ban.
+_NEG = r"(?:(?:is|are)\s+not|(?:is|are)n't|'s\s+not)"
+_PRON = r"(?:it|that)(?:'s|\s+is)"
+
 PERFORMED = [
     (r"\bworth (?:noting|spotting|knowing|saying|having)\b",
      "cut it, or say the thing itself"),
-    (r"\bthat is the [a-z ]{0,26}worth\b",
+    (r"\b" + _PRON + r" the [a-z ]{0,26}worth\b",
      "the sentence before it already made the point"),
-    (r"\b(?:is|are) (?:rarely|not) the problem\b",
+    (r"\b" + _NEG + r"\s+(?:a|the)\s+[a-z]{0,16}\s*problem\b",
      "state what IS the problem and drop the reversal"),
     (r"\bthe tell is\b",
      "name the signal without announcing that it is one"),
     (r"\bwhich is the (?:whole|only|real) (?:reason|point|thing)\b",
      "if it is the whole reason, the sentence can just say so"),
-    (r"\bit is not [a-z]+\.\s+it is\b",
+    (r"\b" + _NEG + r"\s+[a-z]+\s*[.,]\s*" + _PRON + r"\b",
      "the corrective reversal, used for rhythm rather than for clarity"),
-    (r"\bis not [a-z]+, it is\b",
-     "same reversal, one comma shorter"),
-    (r"\bthat is (?:the point|the difference|the whole)\b",
+    (r"\b" + _PRON + r" (?:the point|the difference|the whole)\b",
      "let the reader reach it"),
 ]
 
 PERFORMED_BAD = [
     "and that is worth noting here",
     "that is the moment worth spotting",
+    "that's the moment worth spotting",
     "the price is not the problem",
+    "that's not a marketing problem",
     "the tell is the spacing",
     "which is the whole reason we built it",
     "it is not slow. it is broken",
+    "the real problem isn't leads. it's follow-up",
     "speed is not luck, it is process",
     "that is the difference",
+    "that's the difference",
 ]
 
 PERFORMED_GOOD = [
     "we answer every lead in under a minute",
     "the furnace failed on the coldest night of the year",
     "a booked appointment that no-shows costs you a truck roll",
+    "the homeowner isn't home until six",
+    "that's when the phone stops ringing",
+    "it is a long conversation and it starts in one minute",
 ]
 
 # Figures that were invented, removed, and must not come back.
@@ -790,6 +803,25 @@ def run():
         if "/*" in css.split("*/")[-1]:
             p.append(f"{rel}: the file ends inside an unterminated comment")
     check(23, "stylesheets are structurally intact", p)
+
+    # 24 - nothing suppresses the focus indicator
+    #
+    # Three rules carried `outline: none` on the form inputs, which defeated the
+    # site's own :focus-visible ring and left a keyboard user with no visible
+    # indication of where they were. The rest of the stylesheet is careful about
+    # this, which is what made it easy to miss.
+    p = []
+    css_path = os.path.join(ROOT, "assets", "css", "styles.css")
+    if os.path.isfile(css_path):
+        css = open(css_path, encoding="utf-8").read()
+        for m in re.finditer(r"outline\s*:\s*(none|0)\s*[;}]", css):
+            line = css[:m.start()].count(chr(10)) + 1
+            p.append(f"styles.css:{line}: {m.group(0).strip()} removes the focus "
+                     "indicator. If a custom one replaces it, give it a visible "
+                     "outline rather than none.")
+        if ":focus-visible" not in css:
+            p.append("styles.css defines no :focus-visible ring at all")
+    check(24, "nothing suppresses the focus indicator", p)
 
     return pages
 

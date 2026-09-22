@@ -5,3 +5,5 @@ server.py
 _tools/
 _notes/
 assets/fonts/*.ttf
+__pycache__/
+*.pyc

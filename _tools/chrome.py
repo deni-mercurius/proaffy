@@ -351,7 +351,8 @@ def main():
         if check:
             stale.append(name)
         else:
-            # write-if-changed: required inside OneDrive, which syncs on mtime.
+            # write-if-changed: a sync client that watches mtime will copy every file
+            # on every run otherwise.
             io.open(path, "w", encoding="utf-8", newline="\n").write(out)
             written.append(name)
 

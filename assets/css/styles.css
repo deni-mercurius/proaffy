@@ -626,7 +626,6 @@ input, textarea, select { font-family: inherit; font-size: inherit; }
   border: 1.5px solid rgba(242,240,235,0.25);
   color: var(--text-on-ink);
   font-size: var(--fs-base);
-  outline: none;
   border-radius: var(--radius-sm);
   transition: border-color var(--dur-base) var(--ease);
 }
@@ -732,7 +731,6 @@ input, textarea, select { font-family: inherit; font-size: inherit; }
   color: var(--clr-text);
   font-size: var(--fs-base);
   border-radius: var(--radius-sm);
-  outline: none;
   transition: border-color var(--dur-base) var(--ease);
 }
 .form__input:focus { border-color: var(--clr-primary); }
@@ -745,7 +743,6 @@ input, textarea, select { font-family: inherit; font-size: inherit; }
   color: var(--clr-text);
   font-size: var(--fs-base);
   border-radius: var(--radius-sm);
-  outline: none;
   resize: vertical;
   min-height: 130px;
   line-height: 1.6;
