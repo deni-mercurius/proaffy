@@ -43,6 +43,7 @@ ACTIVE = {
     "blog-hvac-seo.html": "blog",
     "blog-hvac-websites.html": "blog",
     "blog-thermogrowth-engine.html": "blog",
+    "blog-solar-quote-requests.html": "blog",
     "contact.html": "contact",
 }
 
@@ -165,6 +166,11 @@ CTA = {
     ),
     # These two ended on nothing at all, while seven other pages closed on the
     # same sentence. Both were the same problem: a template applied unevenly.
+    "blog-solar-quote-requests.html": (
+        "Stop losing the ones that went quiet",
+        "We reopen the proposals nobody answered, on the same sequence as the "
+        "new enquiries.",
+    ),
     "hvac.html": (
         "Try it on one cold snap",
         "Run it through your next busy week and see which calls got answered that "
