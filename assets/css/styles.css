@@ -220,14 +220,6 @@ input, textarea, select { font-family: inherit; font-size: inherit; }
   line-height: 1.15;
   letter-spacing: -0.01em;
 }
-
-.h3 {
-  font-family: var(--font-accent);
-  font-size: clamp(var(--fs-xl), 2.5vw, var(--fs-2xl));
-  font-weight: 600;
-  line-height: 1.2;
-}
-
 .section-intro {
   font-size: clamp(var(--fs-md), 2vw, var(--fs-lg));
   color: var(--clr-text-muted);
@@ -269,15 +261,6 @@ input, textarea, select { font-family: inherit; font-size: inherit; }
 }
 
 /* White outline - on dark bg */
-.btn--outline {
-  border: 1.5px solid rgba(242,240,235,0.5);
-  color: var(--text-on-ink);
-  background: transparent;
-}
-.btn--outline:hover {
-  border-color: var(--text-on-ink);
-  background: rgba(242,240,235,0.08);
-}
 
 /* Dark outline - on light bg */
 .btn--outline-dark {
@@ -415,52 +398,10 @@ input, textarea, select { font-family: inherit; font-size: inherit; }
   margin-top: var(--sp-10);
 }
 /* ── Marquee ─────────────────────────────────────────────── */
-.marquee-wrap {
-  overflow: hidden;
-  width: 100%;
-  background: var(--clr-dark);
-  padding-block: var(--sp-5);
-  border-top: 1px solid var(--clr-border-dark);
-  border-bottom: 1px solid var(--clr-border-dark);
-}
-
-
-
-
-
 /* ── Problem Section ─────────────────────────────────────── */
-.problem-lede {
-  font-size: clamp(var(--fs-md), 2vw, var(--fs-lg));
-  color: var(--clr-text-muted);
-  line-height: 1.75;
-  max-width: 68ch;
-}
 /* 3 stats in a row */
-.stats-row {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--sp-6);
-  margin-top: var(--sp-12);
-}
-
 /* Before/after range stat: two mirrored figures with a connector */
-.stat__num--range {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.06em;
-  line-height: 1.04;
-}
-
-
 /* ── Services Grid ───────────────────────────────────────── */
-.services-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--sp-6);
-  margin-top: var(--sp-10);
-}
-
 .feature-card__link {
   display: inline-block;
   margin-top: var(--sp-5);
@@ -603,32 +544,8 @@ input, textarea, select { font-family: inherit; font-size: inherit; }
 }
 
 /* ── Features ────────────────────────────────────────────── */
-.features-header {
-  max-width: 600px;
-}
-
-
-
-
-
 /* ── How It Works - Steps ────────────────────────────────── */
-.steps-header {
-  max-width: 540px;
-  margin-bottom: var(--sp-12);
-}
-
-
-
-
-
-
-
 /* ── Who This Is For ─────────────────────────────────────── */
-.who-section {
-  max-width: 620px;
-  margin-inline: auto;
-}
-
 .checklist {
   display: flex;
   flex-direction: column;
@@ -738,69 +655,13 @@ input, textarea, select { font-family: inherit; font-size: inherit; }
 .page-header .h1 { margin-top: var(--sp-4); }
 .page-header .section-intro { color: var(--clr-text-muted); margin-top: var(--sp-6); }
 
-.about-story {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--sp-16);
-  align-items: start;
-}
 
-.about-story__body {
-  font-size: var(--fs-md);
-  color: var(--clr-text-muted);
-  line-height: 1.75;
-}
 
-.about-story__body + .about-story__body { margin-top: var(--sp-5); }
 
-.about-built {
-  background: var(--clr-dark-2);
-  border-radius: var(--radius-lg);
-  padding: var(--sp-8);
-}
 
-.about-built__heading {
-  font-family: var(--font-accent);
-  font-size: var(--fs-lg);
-  font-weight: 600;
-  color: var(--clr-text-on-dark);
-  margin-bottom: var(--sp-4);
-}
 
-.about-built__body {
-  font-size: var(--fs-base);
-  color: var(--clr-text-muted-dark);
-  line-height: 1.7;
-}
 
-.approach-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--sp-16);
-  align-items: start;
-}
 
-.approach-heading {
-  font-family: var(--font-accent);
-  font-size: var(--fs-2xl);
-  font-weight: 600;
-  color: var(--clr-text-on-dark);
-  margin-bottom: var(--sp-6);
-}
-
-.mission-heading {
-  font-family: var(--font-accent);
-  font-size: var(--fs-2xl);
-  font-weight: 600;
-  color: var(--clr-text-on-dark);
-  margin-bottom: var(--sp-5);
-}
-
-.mission-body {
-  font-size: var(--fs-md);
-  color: var(--clr-text-muted-dark);
-  line-height: 1.75;
-}
 
 /* ── Contact Form ────────────────────────────────────────── */
 .contact-grid {
@@ -893,12 +754,6 @@ input, textarea, select { font-family: inherit; font-size: inherit; }
 .form__textarea:focus { border-color: var(--clr-primary); }
 
 .form__submit { align-self: flex-start; }
-
-.form__status {
-  font-size: var(--fs-sm);
-  margin-top: var(--sp-2);
-  line-height: 1.5;
-}
 /* The form posts natively and the endpoint redirects back with #sent, so
    :target reveals the confirmation. No JavaScript is involved, which is why
    the form still works with scripting disabled. */
@@ -1183,8 +1038,6 @@ input, textarea, select { font-family: inherit; font-size: inherit; }
 .breadcrumb__current { color: var(--clr-text); font-weight: 600; }
 
 /* 3-up variant of the blog grid (home "From the Blog") */
-.blog-grid--3 { grid-template-columns: repeat(3, 1fr); }
-
 /* ── Footer ──────────────────────────────────────────────── */
 .footer {
   background: var(--clr-dark);
@@ -1263,8 +1116,6 @@ input, textarea, select { font-family: inherit; font-size: inherit; }
     gap: var(--sp-10);
   }
 
-  .features-grid { grid-template-columns: 1fr; }
-  .services-grid  { grid-template-columns: 1fr; }
   .blog-grid { grid-template-columns: 1fr; }
 
   .footer__inner { grid-template-columns: 1fr; }
@@ -1275,10 +1126,6 @@ input, textarea, select { font-family: inherit; font-size: inherit; }
 
   .section { padding-block: var(--sp-16); }
 
-  .stats-row { grid-template-columns: 1fr; }
-
-  .step { grid-template-columns: 2.5rem 1fr; gap: var(--sp-4); }
-  .step__num { font-size: var(--fs-2xl); }
 
   .form__row { grid-template-columns: 1fr; }
 
@@ -1286,8 +1133,6 @@ input, textarea, select { font-family: inherit; font-size: inherit; }
   .cta-email__input { max-width: 100%; width: 100%; }
 
   .hero__title { font-size: clamp(var(--fs-2xl), 10vw, var(--fs-3xl)); }
-
-  .result-callout { padding: var(--sp-6); }
 }
 
 /* ── Nav CTA ─────────────────────────────────────────────── */
@@ -1365,10 +1210,7 @@ input, textarea, select { font-family: inherit; font-size: inherit; }
 
 /* Spacing, named for the step rather than the pixel count, so they move with
    the scale instead of pinning it. */
-.mt-5  { margin-top: var(--sp-5); }
 .mt-8  { margin-top: var(--sp-8); }
-.mt-10 { margin-top: var(--sp-10); }
-.mb-6  { margin-bottom: var(--sp-6); }
 
 /* ══ IDIOM 1: the ledger row ══════════════════════════════
    Rows separated by a hairline. No card, no radius, no shadow, no fill. It is

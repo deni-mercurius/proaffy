@@ -30,7 +30,7 @@
   <link rel="preload" as="font" type="font/woff2" href="assets/fonts/ibm-plex-sans-400.woff2" crossorigin />
   <link rel="preload" as="font" type="font/woff2" href="assets/fonts/ibm-plex-sans-600.woff2" crossorigin />
   <link rel="stylesheet" href="assets/css/fonts.css?v=4044ff39" />
-  <link rel="stylesheet" href="assets/css/styles.css?v=0842dee2" />
+  <link rel="stylesheet" href="assets/css/styles.css?v=e0d1a65c" />
   <script defer src="assets/js/main.js?v=b54115e2"></script>
   <!-- /chrome:assets -->
 
@@ -226,7 +226,43 @@
       </div>
     </section>
 
-  </main>
+  <!-- chrome:cta -->
+  <section class="cta-email" aria-labelledby="cta-heading">
+    <div class="cta-email__content">
+      <h2 class="cta-email__heading" id="cta-heading">Reading about it is slower than watching it</h2>
+      <p class="cta-email__sub">Put the sequence on your own enquiries and look at what the first replies actually said.</p>
+
+      <div class="form-sent" id="sent" role="status">
+        <p class="form-sent__title">Thank you. Your message reached us.</p>
+        <p>We reply within one business day. If it is urgent, email
+          <a href="mailto:info@proaffy.com">info@proaffy.com</a>.</p>
+      </div>
+
+      <form class="cta-email__form" id="ctaEmailForm"
+            action="https://api.web3forms.com/submit" method="POST">
+        <input type="hidden" name="access_key" value="5da7b2bb-24b2-42ad-96ac-7228dd4ce8d6" />
+        <input type="hidden" name="subject" value="Free pilot request from proaffy.com" />
+        <input type="hidden" name="redirect" value="https://proaffy.com/blog?sent=1#sent" />
+        <input type="checkbox" name="botcheck" class="hp" tabindex="-1"
+               autocomplete="off" aria-hidden="true" />
+        <input
+          type="email"
+          name="email"
+          class="cta-email__input"
+          placeholder="Email Address..."
+          aria-label="Email address"
+          required
+        />
+        <button type="submit" class="btn btn--filled">Book Your Free Pilot</button>
+      </form>
+
+      <p class="cta-email__contact">
+        <span>Or email us directly:</span>
+        <a href="mailto:info@proaffy.com">info@proaffy.com</a>
+      </p>
+    </div>
+  </section>
+  <!-- /chrome:cta -->  </main>
 
   <!-- ── Footer ───────────────────────────────────────────── -->
   <!-- chrome:footer -->

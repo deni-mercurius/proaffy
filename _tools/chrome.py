@@ -160,6 +160,18 @@ CTA = {
         "Being easy to find is where it starts",
         "Being quick to answer is where the job actually gets booked.",
     ),
+    # These two ended on nothing at all, while seven other pages closed on the
+    # same sentence. Both were the same problem: a template applied unevenly.
+    "about.html": (
+        "Find out what it does on your enquiries",
+        "A month on your live leads answers the question better than another "
+        "paragraph about us.",
+    ),
+    "blog.html": (
+        "Reading about it is slower than watching it",
+        "Put the sequence on your own enquiries and look at what the first "
+        "replies actually said.",
+    ),
 }
 
 
@@ -244,10 +256,15 @@ def find_region(text, region):
 
     if region == "cta":
         start = text.find('  <section class="cta-email"')
-        if start == -1:
-            return None
-        end = text.find("</section>", start)
-        return (start, end + len("</section>")) if end != -1 else None
+        if start != -1:
+            end = text.find("</section>", start)
+            return (start, end + len("</section>")) if end != -1 else None
+        # A page that never had one. About and Blog ended on nothing at all,
+        # while seven other pages closed on the same sentence: the same
+        # template applied unevenly, in two different directions. Insert it at
+        # the foot of main, as a zero-width replacement.
+        close = text.find("  </main>")
+        return (close, close) if close != -1 else None
 
     if region == "assets":
         start = text.find('  <link rel="icon"')

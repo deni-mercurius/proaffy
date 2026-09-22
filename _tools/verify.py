@@ -509,6 +509,10 @@ def run():
     seen = {}
     for name, pg in pages.items():
         stripped = pg.raw
+        # A source line is a reference. Two pages citing the same study should
+        # word it identically, and varying a citation to satisfy a duplicate
+        # check would corrupt the citation to protect the metric.
+        stripped = re.sub(r'<p class="source">.*?</p>', "", stripped, flags=re.S)
         for open_m, close_m in CHROME_MARKERS:
             while open_m in stripped and close_m in stripped:
                 a = stripped.index(open_m)
@@ -762,6 +766,30 @@ def run():
             for m in re.finditer(pat, text, re.I):
                 p.append(f"{name}: {m.group(0)!r} is {why}")
     check(22, "retired figures stay retired", p)
+
+    # 23 - the stylesheet is structurally intact
+    #
+    # A rule-removal pass once truncated a comment banner instead of removing
+    # it whole, which left every rule after it inside an open comment. The page
+    # still rendered, the brace count still balanced, and a link on one page
+    # became the same colour as the band behind it. Comment balance is the
+    # cheap check that would have caught it.
+    p = []
+    for rel in ("assets/css/styles.css", "assets/css/fonts.css"):
+        fp = os.path.join(ROOT, rel)
+        if not os.path.isfile(fp):
+            p.append(f"{rel} is missing")
+            continue
+        css = open(fp, encoding="utf-8").read()
+        if css.count("/*") != css.count("*/"):
+            p.append(f"{rel}: {css.count('/*')} comments opened but "
+                     f"{css.count('*/')} closed, so some rules are commented out")
+        if css.count("{") != css.count("}"):
+            p.append(f"{rel}: {css.count('{')} braces opened, {css.count('}')} closed")
+        # A selector that survived a truncated comment reads as part of it.
+        if "/*" in css.split("*/")[-1]:
+            p.append(f"{rel}: the file ends inside an unterminated comment")
+    check(23, "stylesheets are structurally intact", p)
 
     return pages
 
