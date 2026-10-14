@@ -1158,6 +1158,40 @@ def run():
                              f"{ceiling} KB ceiling for a {entry['kind']}")
     check(30, "image weight and LCP discipline", p)
 
+    # 31 - the sitemap's lastmod tells the truth
+    #
+    # It said 2026-07-11 for twelve of fifteen pages while every one of them had
+    # been rewritten at least twice since, the last time on the day this check
+    # was written. lastmod is the one field in a sitemap a crawler is entitled
+    # to trust, and a stale one actively tells it not to re-read a page that
+    # changed completely. _tools/sitemap.py now derives it from git; this makes
+    # sure nobody hand-edits it back into a lie.
+    p = []
+    sm_path = os.path.join(ROOT, "sitemap.xml")
+    if os.path.isfile(sm_path):
+        sys.path.insert(0, os.path.join(ROOT, "_tools"))
+        try:
+            import sitemap as smmod
+            text = open(sm_path, encoding="utf-8").read()
+            entries = dict(re.findall(
+                r"<loc>[^<]*?([^<]*?)</loc>\s*<lastmod>([^<]*)</lastmod>", text))
+            for path_, filename, _f, _pr in smmod.PAGES:
+                want = smmod.lastmod(filename)
+                got = None
+                for loc, mod in re.findall(
+                        r"<loc>([^<]*)</loc>\s*<lastmod>([^<]*)</lastmod>", text):
+                    if loc.endswith(path_) and (path_ != "/" or loc.rstrip("/").count("/") == 2):
+                        got = mod
+                        break
+                if got is None:
+                    p.append(f"sitemap.xml: {path_} is missing")
+                elif want and got != want:
+                    p.append(f"sitemap.xml: {path_} says lastmod {got}, but git says "
+                             f"{filename} last changed {want}")
+        except Exception as exc:
+            p.append(f"could not check the sitemap: {exc}")
+    check(31, "sitemap lastmod matches when the page actually changed", p)
+
     return pages
 
 
