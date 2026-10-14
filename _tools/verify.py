@@ -1192,6 +1192,56 @@ def run():
             p.append(f"could not check the sitemap: {exc}")
     check(31, "sitemap lastmod matches when the page actually changed", p)
 
+    # 32 - article structured data matches its sources
+    #
+    # Three separate lies lived in these six blocks. Every post named the same
+    # share card as its image, which is the least useful thing you can tell a
+    # crawler about six different articles. Every dateModified said 2026-07-01
+    # on posts rewritten the day this was written. And the solar post claimed a
+    # datePublished three months before the file existed.
+    #
+    # The image URLs carry a content hash, so a regrade silently breaks every
+    # one of them; that is the same failure mode check 28 exists for, which is
+    # why this check came with the feature rather than after it.
+    p = []
+    if manifest and photomod:
+        for page_name, region in sorted(photomod.ARTICLE_IMAGE.items()):
+            page_path = os.path.join(ROOT, page_name)
+            if not os.path.isfile(page_path):
+                continue
+            text = open(page_path, encoding="utf-8").read()
+            want_img = photomod.article_image(region, manifest)
+            fixed, _ = photomod.set_article_image(text, want_img) if want_img else (text, 0)
+            if want_img and fixed != text:
+                p.append(f"{page_name}: BlogPosting image is stale; run "
+                         "python _tools/photos.py")
+    try:
+        sys.path.insert(0, os.path.join(ROOT, "_tools"))
+        import sitemap as smmod
+        date_problems, _ = smmod.fix_article_dates(check=True)
+        p.extend(date_problems)
+    except Exception as exc:
+        p.append(f"could not check the article dates: {exc}")
+
+    # Every BlogPosting must still parse and carry all three fields.
+    for name, pg in pages.items():
+        for raw in pg.ld:
+            try:
+                data = json.loads(raw)
+            except json.JSONDecodeError:
+                continue
+            for node in (data.get("@graph") or [data]):
+                if node.get("@type") != "BlogPosting":
+                    continue
+                for field in ("image", "datePublished", "dateModified"):
+                    if not node.get(field):
+                        p.append(f"{name}: BlogPosting has no {field}")
+                if (node.get("datePublished") and node.get("dateModified")
+                        and node["dateModified"] < node["datePublished"]):
+                    p.append(f"{name}: dateModified {node['dateModified']} is before "
+                             f"datePublished {node['datePublished']}")
+    check(32, "article structured data matches its sources", p)
+
     return pages
 
 

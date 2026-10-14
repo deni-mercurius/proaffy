@@ -183,6 +183,60 @@ SLOTS = [
 MARKERS = {s.region: (f"  <!-- photo:{s.region} -->",
                       f"  <!-- /photo:{s.region} -->") for s in SLOTS}
 
+# Blog posts carry no photograph of their own, but their BlogPosting structured
+# data should name an image representative of the article. All six pointed at
+# the same share card, which is the weakest thing you can tell Google about six
+# different articles.
+#
+# These reuse derivatives that already exist, so the mapping costs no bytes.
+# The largest WEBP is chosen rather than the AVIF: this URL is read by crawlers
+# and link unfurlers rather than by the site, and WebP is the wider bet.
+#
+# Deliberately NOT done: Google asks for 16x9, 4x3 and 1x1 crops of each
+# article image "for best results". Generating those for these four masters
+# came to about 1.9 MB of files no visitor would ever load, against a repo
+# whose entire image payload is 2.3 MB. One representative image per article,
+# already above the 800,000 pixel minimum, is the trade taken here.
+ARTICLE_IMAGE = {
+    "blog-thermogrowth-engine.html": "index-sequence",      # the first reply
+    "blog-hvac-seo.html": "services-web",                   # found on a phone
+    "blog-hvac-geo.html": "solar-compare",                  # homeowner researching
+    "blog-hvac-websites.html": "services-web",
+    "blog-hvac-digital-presence.html": "services-web",
+    "blog-solar-quote-requests.html": "solar-hero",
+}
+
+
+def article_image(region, manifest):
+    """The URL a blog post's BlogPosting.image should carry."""
+    entry = manifest.get(region)
+    if not entry:
+        return None
+    webps = [f for f in entry["files"] if f["fmt"] == "webp"]
+    if not webps:
+        return None
+    biggest = max(webps, key=lambda f: f["width"])
+    return f"https://proaffy.com/assets/photos/{biggest['name']}"
+
+
+def set_article_image(text, url):
+    """Replace the image on the BlogPosting node, and nothing else.
+
+    Organization carries an image too, on every page, and a blind replace would
+    repoint the brand image at a photograph of somebody else's kitchen.
+    """
+    out, changed = [], False
+    for block in re.split(r'(<script type="application/ld\+json">.*?</script>)',
+                          text, flags=re.S):
+        if '"BlogPosting"' in block and '"image"' in block:
+            new = re.sub(r'("@type":\s*"BlogPosting".*?"image":\s*)"[^"]*"',
+                         lambda m: m.group(1) + f'"{url}"', block, count=1, flags=re.S)
+            changed = changed or new != block
+            out.append(new)
+        else:
+            out.append(block)
+    return "".join(out), changed
+
 
 # ── Grading ──────────────────────────────────────────────────────────────────
 
@@ -419,6 +473,28 @@ def main():
                     io.open(page_path, "w", encoding="utf-8",
                             newline="\n").write(new)
                     written.append(f"{slot.page}:{slot.region}")
+
+    # Article images. Done after the manifest is complete, because each one
+    # points at a derivative belonging to some other page's slot.
+    for page_name, region in sorted(ARTICLE_IMAGE.items()):
+        page_path = os.path.join(ROOT, page_name)
+        if not os.path.isfile(page_path):
+            problems.append(f"{page_name}: listed in ARTICLE_IMAGE but not on disk")
+            continue
+        url = article_image(region, manifest)
+        if not url:
+            problems.append(f"{page_name}: no derivative for article image {region}")
+            continue
+        text = io.open(page_path, encoding="utf-8").read()
+        new, changed = set_article_image(text, url)
+        if '"BlogPosting"' not in text:
+            problems.append(f"{page_name}: no BlogPosting node to put an image on")
+        elif changed:
+            if check:
+                problems.append(f"{page_name}: BlogPosting image is out of date")
+            else:
+                io.open(page_path, "w", encoding="utf-8", newline="\n").write(new)
+                written.append(f"{page_name}:article-image")
 
     # Orphans. A regrade changes every hash, and without this the old files sit
     # in the repo forever, served to nobody and counted by every size audit.
