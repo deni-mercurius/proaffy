@@ -104,6 +104,21 @@ FOOTER_LEGAL = [
     ("/terms", "Terms of Service"),
 ]
 
+# The profiles. These same two URLs are the Organization.sameAs entries in every
+# page's structured data, and they are written here in exactly the form used
+# there so the two cannot drift: a company rename that updates one and not the
+# other leaves a crawler reconciling a live profile against a dead link, which
+# is the specific failure this pair was flagged for. Gate check 33 holds it.
+#
+# Both verified to resolve on 2026-10-14. LinkedIn returns its own description
+# naming HVAC, solar and the ThermoGrowth Engine. Instagram serves a bare title
+# to anything without a browser fingerprint, so it is "not contradicted" rather
+# than confirmed.
+SOCIAL = [
+    ("https://www.linkedin.com/company/proaffy/", "LinkedIn"),
+    ("https://www.instagram.com/proaffy.automation/", "Instagram"),
+]
+
 # Hardcoded, not datetime.now().year. Deriving it would mean that merely running
 # this tool in January rewrites all 16 files, which is a diff nobody asked for
 # and a deploy nobody reviewed.
@@ -128,6 +143,13 @@ def footer_block():
         f'            <a href="{href}" class="footer__link">{label}</a>'
         for href, label in FOOTER_LEGAL
     )
+    # rel="noopener" on every target=_blank: without it the opened tab gets a
+    # window.opener handle back to this page.
+    social = "\n".join(
+        f'            <a href="{href}" class="footer__link" target="_blank"'
+        f' rel="noopener noreferrer me">{label}</a>'
+        for href, label in SOCIAL
+    )
     return f"""  <footer class="footer" role="contentinfo">
     <div class="container">
       <div class="footer__inner">
@@ -138,6 +160,9 @@ def footer_block():
           </a>
           <p class="footer__line">Lead response and marketing for HVAC and solar contractors.</p>
           <a href="mailto:info@proaffy.com" class="footer__email">info@proaffy.com</a>
+          <div class="footer__social">
+{social}
+          </div>
         </div>
 
         <nav class="footer__col" aria-label="Footer, what we do">

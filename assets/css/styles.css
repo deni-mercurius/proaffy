@@ -1298,6 +1298,15 @@ input, textarea, select { font-family: inherit; font-size: inherit; }
 }
 .footer__email:hover { color: var(--violet-deep); }
 
+/* A row, not a column: two profiles do not need the vertical rhythm the nav
+   columns use, and they sit under the email as one contact block. */
+.footer__social {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2) var(--sp-6);
+  margin-top: var(--sp-1);
+}
+
 .footer__heading {
   font-size: var(--fs-xs);
   font-weight: 600;

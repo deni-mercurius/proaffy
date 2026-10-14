@@ -1242,6 +1242,45 @@ def run():
                              f"datePublished {node['datePublished']}")
     check(32, "article structured data matches its sources", p)
 
+    # 33 - the social profiles agree with themselves
+    #
+    # The same two URLs appear as Organization.sameAs in all fifteen pages and
+    # as links in the footer. A company rename that updates one and not the
+    # other leaves a crawler reconciling a live profile against a dead link,
+    # and this project has already been renamed once: the risk was written into
+    # the plan as "a recent rename often leaves social URLs pointing at the old
+    # handle" and went unchecked until the owner confirmed them by hand.
+    p = []
+    try:
+        sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+        import chrome as chromemod
+        want = {href for href, _label in chromemod.SOCIAL}
+        for name, pg in pages.items():
+            same_as = set()
+            for raw in pg.ld:
+                try:
+                    data = json.loads(raw)
+                except json.JSONDecodeError:
+                    continue
+                for node in (data.get("@graph") or [data]):
+                    if node.get("@type") == "Organization":
+                        for url in node.get("sameAs") or []:
+                            same_as.add(url)
+            if not same_as:
+                continue
+            for url in want - same_as:
+                p.append(f"{name}: footer links {url} but Organization.sameAs "
+                         "does not list it")
+            for url in same_as - want:
+                p.append(f"{name}: sameAs lists {url} but the footer does not "
+                         "link it; one of the two is stale")
+            for url in same_as:
+                if "?" in url or "#" in url:
+                    p.append(f"{name}: sameAs carries a tracking parameter: {url}")
+    except Exception as exc:
+        p.append(f"could not check the social profiles: {exc}")
+    check(33, "footer profiles and sameAs are the same two URLs", p)
+
     return pages
 
 
