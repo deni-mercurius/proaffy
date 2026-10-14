@@ -43,5 +43,14 @@
 
 # 30 days and NOT immutable: images are referenced by a stable filename, so
 # replacing one under the same name has to reach people who already have it.
+# This covers the logo, the icons and the OG image.
 /assets/images/*
   Cache-Control: public, max-age=2592000
+
+# The photography IS immutable, and the difference is the filename. Every file
+# under here is written by _tools/photos.py as <slug>.<content-hash>-<width>,
+# so a regrade produces new names rather than new bytes at an old name, and the
+# tool deletes the files nothing references any more. A returning visitor never
+# revalidates 2.28 MB of photographs that cannot have changed.
+/assets/photos/*
+  Cache-Control: public, max-age=31536000, immutable

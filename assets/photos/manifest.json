@@ -1,0 +1,518 @@
+{
+  "index-hero": {
+    "page": "index.html",
+    "kind": "hero",
+    "shape": "hero-bleed",
+    "sizes": "100vw",
+    "lcp": true,
+    "alt": "A technician taking tools from the open back of a work van on a driveway at dusk, with a lit house behind him.",
+    "caption": "The call that comes in after six is the one that decides who gets the job.",
+    "fallback": 640,
+    "files": [
+      {
+        "name": "index-hero.1fc59016-640.avif",
+        "width": 640,
+        "height": 360,
+        "fmt": "avif"
+      },
+      {
+        "name": "index-hero.5c25d457-640.webp",
+        "width": 640,
+        "height": 360,
+        "fmt": "webp"
+      },
+      {
+        "name": "index-hero.fc65923c-1024.avif",
+        "width": 1024,
+        "height": 576,
+        "fmt": "avif"
+      },
+      {
+        "name": "index-hero.6c9bd766-1024.webp",
+        "width": 1024,
+        "height": 576,
+        "fmt": "webp"
+      },
+      {
+        "name": "index-hero.458a6847-1600.avif",
+        "width": 1600,
+        "height": 900,
+        "fmt": "avif"
+      },
+      {
+        "name": "index-hero.07c42fae-1600.webp",
+        "width": 1600,
+        "height": 900,
+        "fmt": "webp"
+      }
+    ]
+  },
+  "index-problem": {
+    "page": "index.html",
+    "kind": "inline",
+    "shape": "inline",
+    "sizes": "(min-width: 961px) 46vw, 100vw",
+    "lcp": false,
+    "alt": "A homeowner standing beside a water heater in his garage, one hand on his head, looking at his phone.",
+    "caption": "He has already filled in three forms. Whoever answers first is the one he ends up talking to.",
+    "fallback": 800,
+    "files": [
+      {
+        "name": "index-problem.bb4e5db5-480.avif",
+        "width": 480,
+        "height": 480,
+        "fmt": "avif"
+      },
+      {
+        "name": "index-problem.2bfc0b89-480.webp",
+        "width": 480,
+        "height": 480,
+        "fmt": "webp"
+      },
+      {
+        "name": "index-problem.b6ccf8bc-800.avif",
+        "width": 800,
+        "height": 800,
+        "fmt": "avif"
+      },
+      {
+        "name": "index-problem.39660018-800.webp",
+        "width": 800,
+        "height": 800,
+        "fmt": "webp"
+      },
+      {
+        "name": "index-problem.60bd34f9-1200.avif",
+        "width": 1200,
+        "height": 1200,
+        "fmt": "avif"
+      },
+      {
+        "name": "index-problem.ebabbf9e-1200.webp",
+        "width": 1200,
+        "height": 1200,
+        "fmt": "webp"
+      }
+    ]
+  },
+  "index-sequence": {
+    "page": "index.html",
+    "kind": "inline",
+    "shape": "inline",
+    "sizes": "(min-width: 961px) 46vw, 100vw",
+    "lcp": false,
+    "alt": "A pair of hands holding a phone in a dim kitchen, a message bubble lighting the screen.",
+    "caption": "A reply inside a minute still reads as a person rather than a system.",
+    "fallback": 800,
+    "files": [
+      {
+        "name": "index-sequence.58510f09-480.avif",
+        "width": 480,
+        "height": 480,
+        "fmt": "avif"
+      },
+      {
+        "name": "index-sequence.d3842bee-480.webp",
+        "width": 480,
+        "height": 480,
+        "fmt": "webp"
+      },
+      {
+        "name": "index-sequence.d5414d27-800.avif",
+        "width": 800,
+        "height": 800,
+        "fmt": "avif"
+      },
+      {
+        "name": "index-sequence.9bfcfe64-800.webp",
+        "width": 800,
+        "height": 800,
+        "fmt": "webp"
+      },
+      {
+        "name": "index-sequence.98e499c6-1200.avif",
+        "width": 1200,
+        "height": 1200,
+        "fmt": "avif"
+      },
+      {
+        "name": "index-sequence.816ebf88-1200.webp",
+        "width": 1200,
+        "height": 1200,
+        "fmt": "webp"
+      }
+    ]
+  },
+  "index-operate": {
+    "page": "index.html",
+    "kind": "inline",
+    "shape": "inline",
+    "sizes": "(min-width: 961px) 46vw, 100vw",
+    "lcp": false,
+    "alt": "An office manager at a desk looking at a week view on a monitor, full of colour-coded appointments.",
+    "caption": "Appointments land in the calendar the office already runs on.",
+    "fallback": 800,
+    "files": [
+      {
+        "name": "index-operate.688dce7a-480.avif",
+        "width": 480,
+        "height": 320,
+        "fmt": "avif"
+      },
+      {
+        "name": "index-operate.61492fca-480.webp",
+        "width": 480,
+        "height": 320,
+        "fmt": "webp"
+      },
+      {
+        "name": "index-operate.864d1126-800.avif",
+        "width": 800,
+        "height": 533,
+        "fmt": "avif"
+      },
+      {
+        "name": "index-operate.9d6c1a9d-800.webp",
+        "width": 800,
+        "height": 533,
+        "fmt": "webp"
+      },
+      {
+        "name": "index-operate.f4185207-1200.avif",
+        "width": 1200,
+        "height": 800,
+        "fmt": "avif"
+      },
+      {
+        "name": "index-operate.c02f6c33-1200.webp",
+        "width": 1200,
+        "height": 800,
+        "fmt": "webp"
+      }
+    ]
+  },
+  "hvac-hero": {
+    "page": "hvac.html",
+    "kind": "hero",
+    "shape": "hero-split",
+    "sizes": "(min-width: 961px) 52vw, 100vw",
+    "lcp": true,
+    "alt": "An HVAC technician crouched beside a rooftop condenser at sunset, reading a set of manifold gauges.",
+    "caption": "A no-heat call at six in the evening, answered before they work down the list.",
+    "fallback": 640,
+    "files": [
+      {
+        "name": "hvac-hero.01bcfca1-640.avif",
+        "width": 640,
+        "height": 360,
+        "fmt": "avif"
+      },
+      {
+        "name": "hvac-hero.ff991825-640.webp",
+        "width": 640,
+        "height": 360,
+        "fmt": "webp"
+      },
+      {
+        "name": "hvac-hero.ae7f2f55-1024.avif",
+        "width": 1024,
+        "height": 576,
+        "fmt": "avif"
+      },
+      {
+        "name": "hvac-hero.fee1c207-1024.webp",
+        "width": 1024,
+        "height": 576,
+        "fmt": "webp"
+      },
+      {
+        "name": "hvac-hero.f834e68a-1600.avif",
+        "width": 1600,
+        "height": 900,
+        "fmt": "avif"
+      },
+      {
+        "name": "hvac-hero.965f91fa-1600.webp",
+        "width": 1600,
+        "height": 900,
+        "fmt": "webp"
+      }
+    ]
+  },
+  "solar-hero": {
+    "page": "solar.html",
+    "kind": "hero",
+    "shape": "hero-split",
+    "sizes": "(min-width: 961px) 52vw, 100vw",
+    "lcp": true,
+    "alt": "Two harnessed installers setting a solar panel onto roof rails under a clear sky.",
+    "caption": "A quote request that went to three other installers in the same sitting.",
+    "fallback": 640,
+    "files": [
+      {
+        "name": "solar-hero.093cc76e-640.avif",
+        "width": 640,
+        "height": 360,
+        "fmt": "avif"
+      },
+      {
+        "name": "solar-hero.3e9c1954-640.webp",
+        "width": 640,
+        "height": 360,
+        "fmt": "webp"
+      },
+      {
+        "name": "solar-hero.3abe8d69-1024.avif",
+        "width": 1024,
+        "height": 576,
+        "fmt": "avif"
+      },
+      {
+        "name": "solar-hero.3c15a00f-1024.webp",
+        "width": 1024,
+        "height": 576,
+        "fmt": "webp"
+      },
+      {
+        "name": "solar-hero.f98c02e9-1600.avif",
+        "width": 1600,
+        "height": 900,
+        "fmt": "avif"
+      },
+      {
+        "name": "solar-hero.c3178bcf-1600.webp",
+        "width": 1600,
+        "height": 900,
+        "fmt": "webp"
+      }
+    ]
+  },
+  "solar-compare": {
+    "page": "solar.html",
+    "kind": "inline",
+    "shape": "inline",
+    "sizes": "(min-width: 961px) 46vw, 100vw",
+    "lcp": false,
+    "alt": "A homeowner sitting on a sofa in the evening, reading on a tablet.",
+    "caption": "Most of the decision happens in the weeks after the first reply, not during it.",
+    "fallback": 800,
+    "files": [
+      {
+        "name": "solar-compare.3766b65d-480.avif",
+        "width": 480,
+        "height": 320,
+        "fmt": "avif"
+      },
+      {
+        "name": "solar-compare.ad5c574b-480.webp",
+        "width": 480,
+        "height": 320,
+        "fmt": "webp"
+      },
+      {
+        "name": "solar-compare.185086af-800.avif",
+        "width": 800,
+        "height": 533,
+        "fmt": "avif"
+      },
+      {
+        "name": "solar-compare.3672814d-800.webp",
+        "width": 800,
+        "height": 533,
+        "fmt": "webp"
+      },
+      {
+        "name": "solar-compare.1ad4844f-1200.avif",
+        "width": 1200,
+        "height": 800,
+        "fmt": "avif"
+      },
+      {
+        "name": "solar-compare.784eb910-1200.webp",
+        "width": 1200,
+        "height": 800,
+        "fmt": "webp"
+      }
+    ]
+  },
+  "contact-hero": {
+    "page": "contact.html",
+    "kind": "hero",
+    "shape": "hero-split",
+    "sizes": "(min-width: 961px) 52vw, 100vw",
+    "lcp": true,
+    "alt": "A technician and a homeowner shaking hands in an open front doorway, a work van at the kerb.",
+    "caption": "The job that got booked because somebody answered.",
+    "fallback": 640,
+    "files": [
+      {
+        "name": "contact-hero.e00d7a51-640.avif",
+        "width": 640,
+        "height": 427,
+        "fmt": "avif"
+      },
+      {
+        "name": "contact-hero.98c45153-640.webp",
+        "width": 640,
+        "height": 427,
+        "fmt": "webp"
+      },
+      {
+        "name": "contact-hero.056d284f-1024.avif",
+        "width": 1024,
+        "height": 683,
+        "fmt": "avif"
+      },
+      {
+        "name": "contact-hero.4b822b91-1024.webp",
+        "width": 1024,
+        "height": 683,
+        "fmt": "webp"
+      },
+      {
+        "name": "contact-hero.45686549-1536.avif",
+        "width": 1536,
+        "height": 1024,
+        "fmt": "avif"
+      },
+      {
+        "name": "contact-hero.0de2dc75-1536.webp",
+        "width": 1536,
+        "height": 1024,
+        "fmt": "webp"
+      }
+    ]
+  },
+  "about-plate": {
+    "page": "about.html",
+    "kind": "hero",
+    "shape": "plate",
+    "sizes": "100vw",
+    "lcp": true,
+    "alt": "A phone face down on the dashboard of a work truck at golden hour, beside a clipboard of job sheets.",
+    "caption": "The phone stays in the van. Nothing was neglected; the work and the enquiries simply happened at the same time.",
+    "fallback": 640,
+    "files": [
+      {
+        "name": "about-plate.693b774d-640.avif",
+        "width": 640,
+        "height": 427,
+        "fmt": "avif"
+      },
+      {
+        "name": "about-plate.354065f5-640.webp",
+        "width": 640,
+        "height": 427,
+        "fmt": "webp"
+      },
+      {
+        "name": "about-plate.0faeb0a6-1024.avif",
+        "width": 1024,
+        "height": 683,
+        "fmt": "avif"
+      },
+      {
+        "name": "about-plate.65436604-1024.webp",
+        "width": 1024,
+        "height": 683,
+        "fmt": "webp"
+      },
+      {
+        "name": "about-plate.ae833417-1536.avif",
+        "width": 1536,
+        "height": 1024,
+        "fmt": "avif"
+      },
+      {
+        "name": "about-plate.41226138-1536.webp",
+        "width": 1536,
+        "height": 1024,
+        "fmt": "webp"
+      }
+    ]
+  },
+  "services-web": {
+    "page": "services.html",
+    "kind": "inline",
+    "shape": "inline",
+    "sizes": "(min-width: 961px) 46vw, 100vw",
+    "lcp": false,
+    "alt": "A phone propped against a toolbox in a truck bed showing a contractor website, a technician working at a condenser behind.",
+    "caption": "Most homeowners meet the company on a phone before they meet anybody from it.",
+    "fallback": 800,
+    "files": [
+      {
+        "name": "services-web.b45c5f1b-480.avif",
+        "width": 480,
+        "height": 480,
+        "fmt": "avif"
+      },
+      {
+        "name": "services-web.97b81eec-480.webp",
+        "width": 480,
+        "height": 480,
+        "fmt": "webp"
+      },
+      {
+        "name": "services-web.8f4804da-800.avif",
+        "width": 800,
+        "height": 800,
+        "fmt": "avif"
+      },
+      {
+        "name": "services-web.9502a855-800.webp",
+        "width": 800,
+        "height": 800,
+        "fmt": "webp"
+      },
+      {
+        "name": "services-web.63726f73-1200.avif",
+        "width": 1200,
+        "height": 1200,
+        "fmt": "avif"
+      },
+      {
+        "name": "services-web.5b7e4843-1200.webp",
+        "width": 1200,
+        "height": 1200,
+        "fmt": "webp"
+      }
+    ]
+  },
+  "about-founder": {
+    "page": "about.html",
+    "kind": "portrait",
+    "shape": "portrait",
+    "sizes": "(min-width: 961px) 220px, 160px",
+    "lcp": false,
+    "alt": "Deni, founder of ProAffy.",
+    "caption": "Deni, Founder",
+    "fallback": 460,
+    "files": [
+      {
+        "name": "about-founder.4fdedc28-280.avif",
+        "width": 280,
+        "height": 350,
+        "fmt": "avif"
+      },
+      {
+        "name": "about-founder.f34cd5b2-280.webp",
+        "width": 280,
+        "height": 350,
+        "fmt": "webp"
+      },
+      {
+        "name": "about-founder.7df2c55e-460.avif",
+        "width": 460,
+        "height": 575,
+        "fmt": "avif"
+      },
+      {
+        "name": "about-founder.3a2ca560-460.webp",
+        "width": 460,
+        "height": 575,
+        "fmt": "webp"
+      }
+    ]
+  }
+}

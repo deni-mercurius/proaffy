@@ -16,14 +16,14 @@
   <meta property="og:title" content="ProAffy | Every lead answered in 60 seconds" />
   <meta property="og:description" content="Every enquiry answered in under 60 seconds, followed up until it books, and booked into the calendar you already use." />
   <meta property="og:url" content="https://proaffy.com/" />
-  <meta property="og:image" content="https://proaffy.com/assets/images/og-image.png" />
+  <meta property="og:image" content="https://proaffy.com/assets/images/og-image.jpg" />
   <meta property="og:site_name" content="ProAffy" />
 
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="ProAffy | Every lead answered in 60 seconds" />
   <meta name="twitter:description" content="Every enquiry answered in under 60 seconds, followed up until it books, and booked into the calendar you already use." />
-  <meta name="twitter:image" content="https://proaffy.com/assets/images/og-image.png" />
+  <meta name="twitter:image" content="https://proaffy.com/assets/images/og-image.jpg" />
 
   <!-- chrome:assets -->
   <link rel="icon" type="image/png" sizes="32x32" href="assets/images/favicon-32.png" />
@@ -32,8 +32,9 @@
   <link rel="preload" as="font" type="font/woff2" href="assets/fonts/ibm-plex-sans-400.woff2" crossorigin />
   <link rel="preload" as="font" type="font/woff2" href="assets/fonts/ibm-plex-sans-600.woff2" crossorigin />
   <link rel="stylesheet" href="assets/css/fonts.css?v=f688352a" />
-  <link rel="stylesheet" href="assets/css/styles.css?v=a1369bd2" />
+  <link rel="stylesheet" href="assets/css/styles.css?v=ec150002" />
   <script defer src="assets/js/main.js?v=b54115e2"></script>
+  <link rel="preload" as="image" type="image/avif" imagesrcset="/assets/photos/index-hero.1fc59016-640.avif 640w, /assets/photos/index-hero.fc65923c-1024.avif 1024w, /assets/photos/index-hero.458a6847-1600.avif 1600w" imagesizes="100vw" />
   <!-- /chrome:assets -->
 
   <!-- Organization + WebSite knowledge graph -->
@@ -52,7 +53,7 @@
           "width": 512,
           "height": 512
         },
-        "image": "https://proaffy.com/assets/images/og-image.png",
+        "image": "https://proaffy.com/assets/images/og-image.jpg",
         "description": "ProAffy answers and follows up the enquiries HVAC companies and solar installers receive, in under 60 seconds, and books the real ones into their calendar. Also websites, local search and AI visibility.",
         "email": "info@proaffy.com",
         "areaServed": { "@type": "Country", "name": "United States" },
@@ -190,7 +191,23 @@
 
   <main id="main">
     <!-- ── Hero: the asymmetric split ─────────────────────── -->
-    <section class="hero" aria-labelledby="hero-heading">
+    <section class="hero hero--photo" aria-labelledby="hero-heading">
+  <!-- photo:index-hero -->
+  <figure class="photo photo--hero-bleed">
+    <picture>
+      <source type="image/avif" sizes="100vw"
+              srcset="/assets/photos/index-hero.1fc59016-640.avif 640w, /assets/photos/index-hero.fc65923c-1024.avif 1024w, /assets/photos/index-hero.458a6847-1600.avif 1600w" />
+      <source type="image/webp" sizes="100vw"
+              srcset="/assets/photos/index-hero.5c25d457-640.webp 640w, /assets/photos/index-hero.6c9bd766-1024.webp 1024w, /assets/photos/index-hero.07c42fae-1600.webp 1600w" />
+      <img src="/assets/photos/index-hero.5c25d457-640.webp"
+        alt="A technician taking tools from the open back of a work van on a driveway at dusk, with a lit house behind him."
+        width="640" height="360"
+        decoding="async"
+        fetchpriority="high" />
+    </picture>
+    <figcaption class="photo__caption">The call that comes in after six is the one that decides who gets the job.</figcaption>
+  </figure>
+  <!-- /photo:index-hero -->
       <div class="container split split--hero">
 
         <div class="split__claim">
@@ -226,6 +243,24 @@
         <div class="split__claim">
           <span class="section-label">The problem</span>
           <h2 class="h2" id="problem-heading">Most enquiries are answered too late to matter</h2>
+          <div class="section__media">
+  <!-- photo:index-problem -->
+  <figure class="photo photo--inline">
+    <picture>
+      <source type="image/avif" sizes="(min-width: 961px) 46vw, 100vw"
+              srcset="/assets/photos/index-problem.bb4e5db5-480.avif 480w, /assets/photos/index-problem.b6ccf8bc-800.avif 800w, /assets/photos/index-problem.60bd34f9-1200.avif 1200w" />
+      <source type="image/webp" sizes="(min-width: 961px) 46vw, 100vw"
+              srcset="/assets/photos/index-problem.2bfc0b89-480.webp 480w, /assets/photos/index-problem.39660018-800.webp 800w, /assets/photos/index-problem.ebabbf9e-1200.webp 1200w" />
+      <img src="/assets/photos/index-problem.39660018-800.webp"
+        alt="A homeowner standing beside a water heater in his garage, one hand on his head, looking at his phone."
+        width="800" height="800"
+        decoding="async"
+        loading="lazy" />
+    </picture>
+    <figcaption class="photo__caption">He has already filled in three forms. Whoever answers first is the one he ends up talking to.</figcaption>
+  </figure>
+  <!-- /photo:index-problem -->
+          </div>
         </div>
 
         <div class="split__evidence prose">
@@ -375,12 +410,32 @@
           </li>
         </ul>
 
-        <p class="sequence__leaks">
-          Three things can happen instead, and the sequence handles each rather than pretending
-          they do not occur. No answer after three attempts, spread across two days. A clear no,
-          which closes the thread. An address outside the radius you gave us, which never reaches
-          your calendar.
-        </p>
+        <div class="split--photo">
+          <p class="sequence__leaks">
+            Three things can happen instead, and the sequence handles each rather than pretending
+            they do not occur. No answer after three attempts, spread across two days. A clear no,
+            which closes the thread. An address outside the radius you gave us, which never reaches
+            your calendar.
+          </p>
+          <div class="section__media">
+  <!-- photo:index-sequence -->
+  <figure class="photo photo--inline">
+    <picture>
+      <source type="image/avif" sizes="(min-width: 961px) 46vw, 100vw"
+              srcset="/assets/photos/index-sequence.58510f09-480.avif 480w, /assets/photos/index-sequence.d5414d27-800.avif 800w, /assets/photos/index-sequence.98e499c6-1200.avif 1200w" />
+      <source type="image/webp" sizes="(min-width: 961px) 46vw, 100vw"
+              srcset="/assets/photos/index-sequence.d3842bee-480.webp 480w, /assets/photos/index-sequence.9bfcfe64-800.webp 800w, /assets/photos/index-sequence.816ebf88-1200.webp 1200w" />
+      <img src="/assets/photos/index-sequence.9bfcfe64-800.webp"
+        alt="A pair of hands holding a phone in a dim kitchen, a message bubble lighting the screen."
+        width="800" height="800"
+        decoding="async"
+        loading="lazy" />
+    </picture>
+    <figcaption class="photo__caption">A reply inside a minute still reads as a person rather than a system.</figcaption>
+  </figure>
+  <!-- /photo:index-sequence -->
+          </div>
+        </div>
       </div>
     </section>
 
@@ -421,10 +476,30 @@
           </li>
         </ul>
 
-        <p class="mt-8">
-          Websites, local search and getting cited by AI assistants are the other half of what we
-          do. <a href="/services" class="link-under">See the full list of services</a>.
-        </p>
+        <div class="split--photo split--photo--flip">
+          <p class="mt-8">
+            Websites, local search and getting cited by AI assistants are the other half of what we
+            do. <a href="/services" class="link-under">See the full list of services</a>.
+          </p>
+          <div class="section__media">
+  <!-- photo:index-operate -->
+  <figure class="photo photo--inline">
+    <picture>
+      <source type="image/avif" sizes="(min-width: 961px) 46vw, 100vw"
+              srcset="/assets/photos/index-operate.688dce7a-480.avif 480w, /assets/photos/index-operate.864d1126-800.avif 800w, /assets/photos/index-operate.f4185207-1200.avif 1200w" />
+      <source type="image/webp" sizes="(min-width: 961px) 46vw, 100vw"
+              srcset="/assets/photos/index-operate.61492fca-480.webp 480w, /assets/photos/index-operate.9d6c1a9d-800.webp 800w, /assets/photos/index-operate.c02f6c33-1200.webp 1200w" />
+      <img src="/assets/photos/index-operate.9d6c1a9d-800.webp"
+        alt="An office manager at a desk looking at a week view on a monitor, full of colour-coded appointments."
+        width="800" height="533"
+        decoding="async"
+        loading="lazy" />
+    </picture>
+    <figcaption class="photo__caption">Appointments land in the calendar the office already runs on.</figcaption>
+  </figure>
+  <!-- /photo:index-operate -->
+          </div>
+        </div>
       </div>
     </section>
 

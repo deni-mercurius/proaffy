@@ -1,6 +1,12 @@
 # Working notes. Never committed, never published.
 _notes/
 
+# Photography masters, 18.6 MB of them. The derivatives under assets/photos/
+# are what the site serves and what is committed; these are the negatives.
+# Git would keep them at full size forever, in a public repo, to rebuild files
+# that are already in the repo.
+_src/
+
 # Python
 __pycache__/
 *.py[cod]

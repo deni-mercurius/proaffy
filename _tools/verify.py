@@ -209,6 +209,24 @@ VOID = {"area", "base", "br", "col", "embed", "hr", "img", "input",
 SKIP_TEXT = {"script", "style"}
 
 
+def srcset_urls(value):
+    """The URLs out of a srcset, dropping the width and density descriptors.
+
+    A candidate is a URL optionally followed by whitespace and a descriptor,
+    candidates separated by commas. The URL itself may contain a comma, so the
+    split is on the comma that FOLLOWS a descriptor or whitespace, not on every
+    comma.
+    """
+    if not value:
+        return []
+    out = []
+    for part in re.split(r",(?=\s*\S+\s+\d+[wx])|,(?=\s*\S+\s*$)", value):
+        token = part.strip().split()
+        if token:
+            out.append(token[0])
+    return out
+
+
 class Page(HTMLParser):
     def __init__(self, name, raw):
         super().__init__(convert_charrefs=True)
@@ -220,6 +238,7 @@ class Page(HTMLParser):
         self.ids = []
         self.idrefs = []          # (kind, value)
         self.imgs = []            # dict of attrs
+        self.sources = []         # <source> inside <picture>, dict of attrs
         self.requests = []        # (tag, url)
         self.inline_styles = 0
         self.ld = []              # raw json strings
@@ -284,6 +303,15 @@ class Page(HTMLParser):
             self.imgs.append(a)
             if a.get("src"):
                 self.requests.append(("img", a["src"]))
+            # A responsive image's real URLs are in srcset, and for four
+            # sessions nothing in this file looked at one. A typo there
+            # resolves fine on the width you tested and 404s on every other.
+            for url in srcset_urls(a.get("srcset")):
+                self.requests.append(("img", url))
+        elif tag == "source":
+            self.sources.append(a)
+            for url in srcset_urls(a.get("srcset")):
+                self.requests.append(("source", url))
         elif tag == "a" and a.get("href"):
             self.requests.append(("a", a["href"]))
 
@@ -689,18 +717,21 @@ def run():
         css_v = chrome.version(os.path.join(ROOT, "assets", "css", "styles.css"))
         js_v = chrome.version(os.path.join(ROOT, "assets", "js", "main.js"))
         fonts_v = chrome.version(os.path.join(ROOT, "assets", "css", "fonts.css"))
-        wanted = {
-            "footer": chrome.footer_block(),
-            "assets": chrome.assets_block(css_v, js_v, fonts_v),
-        }
+        wanted = {"footer": chrome.footer_block()}
         for name, pg in pages.items():
             for region in ("nav", "footer", "assets"):
                 open_m, close_m = chrome.MARKERS[region]
                 if open_m not in pg.raw or close_m not in pg.raw:
                     p.append(f"{name}: no {region} markers; run python _tools/chrome.py")
                     continue
-                body = (chrome.nav_block(chrome.ACTIVE.get(name)) if region == "nav"
-                        else wanted[region])
+                # assets carries the per-page hero preload, so it is built per
+                # page rather than once.
+                if region == "nav":
+                    body = chrome.nav_block(chrome.ACTIVE.get(name))
+                elif region == "assets":
+                    body = chrome.assets_block(css_v, js_v, fonts_v, name)
+                else:
+                    body = wanted[region]
                 got = pg.raw.split(open_m, 1)[1].split(close_m, 1)[0]
                 if got.strip("\n") != body:
                     p.append(f"{name}: the {region} block was hand-edited and no longer "
@@ -938,8 +969,35 @@ def run():
             r"(?:^|[\s,])(?:body|\.(?:section|hero|cta-|footer|band|page-)"
             r"[a-z0-9_-]*)$")
 
+        # One named allowance, and it is not a loosening.
+        #
+        # .hero--photo is the homepage hero: a photograph with the headline on
+        # top of it. The dark background is the base the scrim sits on and the
+        # colour the box holds while the image is still arriving; without it the
+        # hero is white type on white paper until the bytes land.
+        #
+        # The allowance is paid for. A dark band is only permitted when the same
+        # stylesheet also re-colours the text that sits in it, so deleting those
+        # overrides puts the check straight back into failure. The rendered
+        # contrast of the result is measured separately, in a browser, because
+        # this file cannot paint anything.
+        DARK_OK = {
+            ".hero--photo": (".hero--photo .h1", ".hero--photo .hero__tagline",
+                             ".hero--photo .figure__num"),
+        }
+
+        for sel, needs in DARK_OK.items():
+            missing = [n for n in needs
+                       if not re.search(re.escape(n) + r"[^{]*\{[^{}]*color:", css)]
+            if missing:
+                p.append(f"styles.css: {sel!r} is allowed to be dark only while it "
+                         f"re-colours its own text, and {missing} no longer set a "
+                         "colour, so the headline is dark-on-dark")
+
         for m in re.finditer(r"(?m)^([a-z.#][^{\n]*?)\s*\{([^{}]*)\}", css):
             for sel in (x.strip() for x in m.group(1).split(",")):
+                if sel in DARK_OK:
+                    continue
                 # Strip pseudo-classes and pseudo-elements: :hover is a state,
                 # ::after is a 2px rule, neither is a band.
                 bare = re.sub(r"::?[a-z-]+(?:\([^)]*\))?", "", sel).strip()
@@ -960,6 +1018,145 @@ def run():
                                  f"band ({raw.strip()} -> {val}). The site is "
                                  "light; carry emphasis with the violet tint.")
     check(27, "no dark bands", p)
+
+    # ── Photography ─────────────────────────────────────────────────────────
+    man_path = os.path.join(ROOT, "assets", "photos", "manifest.json")
+    manifest, photomod = {}, None
+    if os.path.isfile(man_path):
+        try:
+            manifest = json.loads(open(man_path, encoding="utf-8").read())
+        except json.JSONDecodeError:
+            manifest = {}
+    if manifest:
+        sys.path.insert(0, os.path.join(ROOT, "_tools"))
+        try:
+            import photos as photomod
+        except Exception:
+            photomod = None
+
+    # 28 - photo regions match what photos.py would write
+    #
+    # Same shape as check 20, and needed for a sharper reason: the derivative
+    # filenames carry a content hash, so a regrade changes every one of them. A
+    # page still holding last grade's hashes looks completely fine in the
+    # markup and 404s every image on the deployed site.
+    p = []
+    if manifest and photomod is None:
+        p.append("assets/photos/manifest.json exists but _tools/photos.py would "
+                 "not import, so nothing here is checked")
+    elif manifest:
+        try:
+            for slot in photomod.SLOTS:
+                page_path = os.path.join(ROOT, slot.page)
+                if not os.path.isfile(page_path):
+                    continue
+                text = open(page_path, encoding="utf-8").read()
+                entry = manifest.get(slot.region)
+                if entry is None:
+                    p.append(f"{slot.page}: photo:{slot.region} is not in the manifest")
+                    continue
+                files = [dict(f) for f in entry["files"]]
+                want = photomod.picture_block(slot, files, entry["fallback"])
+                open_m, close_m = photomod.MARKERS[slot.region]
+                start = text.find(open_m)
+                if start == -1:
+                    p.append(f"{slot.page}: no markers for photo:{slot.region}")
+                    continue
+                end = text.find(close_m, start)
+                got = text[start:end + len(close_m)]
+                if got != want:
+                    p.append(f"{slot.page}: photo:{slot.region} does not match its "
+                             "template; run python _tools/photos.py")
+        except Exception as exc:
+            p.append(f"could not check the photos: {exc}")
+    check(28, "photo regions match their template", p)
+
+    # 29 - every responsive image URL resolves
+    #
+    # Check 4 has always followed <img src> and nothing else, so until the
+    # parser above learned srcset, every URL in a srcset or a <source> was
+    # unchecked. There are now 64 of them and they are generated, which is
+    # exactly the situation where nobody looks.
+    p = []
+    seen = 0
+    for name, pg in pages.items():
+        for kind, url in pg.requests:
+            if kind not in ("img", "source"):
+                continue
+            if url.startswith(("http://", "https://", "data:")):
+                continue
+            seen += 1
+            rel = url.split("?")[0].split("#")[0].lstrip("/")
+            if not os.path.isfile(os.path.join(ROOT, rel)):
+                p.append(f"{name}: {url} does not resolve to a file")
+        for src in pg.sources:
+            if not src.get("srcset"):
+                p.append(f"{name}: a <source> has no srcset")
+            if not src.get("type"):
+                p.append(f"{name}: a <source> has no type, so the browser must "
+                         "download it to find out what it is")
+    check(29, f"every responsive image URL resolves ({seen} checked)", p)
+
+    # 30 - image weight and LCP discipline
+    #
+    # The site was 116-134 KB per page with no photography at all. Eleven
+    # photographs can undo that quietly, and the specific own-goal is marking
+    # the hero loading="lazy": it is the largest contentful paint on its page,
+    # and lazy tells the browser to find it late.
+    p = []
+    PAGE_BUDGET_KB = 420
+    if manifest and photomod:
+        by_page = {}
+        for region, entry in manifest.items():
+            biggest = max((f for f in entry["files"] if f["fmt"] == "avif"),
+                          key=lambda f: f["width"])
+            path = os.path.join(ROOT, "assets", "photos", biggest["name"])
+            kb = os.path.getsize(path) / 1024 if os.path.isfile(path) else 0
+            by_page.setdefault(entry["page"], []).append((region, entry, kb))
+
+        for page_name, entries in sorted(by_page.items()):
+            total = sum(kb for _r, _e, kb in entries)
+            if total > PAGE_BUDGET_KB:
+                p.append(f"{page_name}: {total:.0f} KB of images at the largest "
+                         f"width, over the {PAGE_BUDGET_KB} KB budget")
+
+            heroes = [r for r, e, _k in entries if e["lcp"]]
+            if len(heroes) > 1:
+                p.append(f"{page_name}: {len(heroes)} images marked lcp; only the "
+                         "one the visitor sees first can be")
+
+            text = ""
+            page_path = os.path.join(ROOT, page_name)
+            if os.path.isfile(page_path):
+                text = open(page_path, encoding="utf-8").read()
+
+            for region, entry, _kb in entries:
+                block = ""
+                mark = f"<!-- photo:{region} -->"
+                if mark in text:
+                    block = text[text.index(mark):
+                                 text.index(f"<!-- /photo:{region} -->")]
+                if entry["lcp"]:
+                    if 'loading="lazy"' in block:
+                        p.append(f"{page_name}: {region} is the LCP image and is "
+                                 'marked loading="lazy", which tells the browser '
+                                 "to fetch it late")
+                    if 'fetchpriority="high"' not in block:
+                        p.append(f"{page_name}: {region} is the LCP image and has "
+                                 "no fetchpriority=high")
+                    if 'rel="preload" as="image"' not in text:
+                        p.append(f"{page_name}: {region} is the LCP image and is "
+                                 "not preloaded in the head")
+                elif 'loading="lazy"' not in block:
+                    p.append(f"{page_name}: {region} is below the fold and is not "
+                             'loading="lazy"')
+
+            for region, entry, kb in entries:
+                ceiling = photomod.CEILING[entry["kind"]]
+                if kb > ceiling:
+                    p.append(f"{page_name}: {region} is {kb:.0f} KB, over the "
+                             f"{ceiling} KB ceiling for a {entry['kind']}")
+    check(30, "image weight and LCP discipline", p)
 
     return pages
 

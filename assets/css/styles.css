@@ -392,6 +392,203 @@ input, textarea, select { font-family: inherit; font-size: inherit; }
   flex-wrap: wrap;
   margin-top: var(--sp-10);
 }
+
+/* ══ PHOTOGRAPHY ══════════════════════════════════════════════════════
+   The site had no photographs until now: two logos per page and nothing
+   else. The rule that keeps eleven of them from turning a document back
+   into a brochure is that a photo is a FIGURE, never a decoration. Each
+   one carries a caption under a violet rule, which is the same device
+   the measured figure already uses, so the pictures argue rather than
+   fill space.
+
+   Every box below sets aspect-ratio, so the layout is final before a
+   single byte of image arrives and cumulative layout shift stays at 0.
+   _tools/photos.py writes the markup; these style it. */
+
+.photo { margin: 0; }
+
+.photo img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  background: var(--bg-2);   /* the box is never white while it loads */
+}
+
+.photo__caption {
+  margin-top: var(--sp-3);
+  padding-top: var(--sp-3);
+  border-top: 2px solid var(--violet);
+  font-size: var(--fs-sm);
+  line-height: 1.5;
+  color: var(--muted);
+  max-width: 46ch;
+}
+
+/* ── The full-bleed hero, used on the homepage only ──────── */
+/* The one place text sits on a photograph. It is paid for by the scrim
+   below, which is not decoration: it is what holds the headline above
+   4.5:1 over a dusk sky. Measured, not assumed. */
+.hero--photo {
+  padding-top: calc(var(--nav-height) + var(--sp-20));
+  padding-bottom: var(--sp-16);
+  background: var(--ink);
+}
+.hero--photo .photo {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+.hero--photo .photo img { height: 100%; }
+/* The caption would be unreadable over the image and is already said by
+   the alt text, so it is removed from the flow rather than hidden from
+   assistive technology. */
+.hero--photo .photo__caption { display: none; }
+
+/* Violet-black rather than neutral black, because the sky in this frame
+   is already the logo's hue. Two stops so the lower half, where the
+   buttons sit, stays darker than the top, where the van is. */
+.hero--photo .photo::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(185deg,
+      rgba(10, 6, 28, 0.62) 0%,
+      rgba(10, 6, 28, 0.74) 46%,
+      rgba(10, 6, 28, 0.88) 100%);
+}
+/* The homepage hero is a .container.split.split--hero, not .hero__content,
+   so the stacking context is set on the container itself. */
+.hero--photo > .container,
+.hero--photo .hero__content { position: relative; z-index: 1; }
+.hero--photo .h1,
+.hero--photo .hero__title { color: var(--on-fill); }
+.hero--photo .hero__tagline,
+.hero--photo .section-label { color: #D9D4EC; }
+
+/* The 60s figure rides on the scrim. Violet on violet-black does not read,
+   so the numeral and its rule go white here and the caption goes light. */
+.hero--photo .figure__num {
+  color: var(--on-fill);
+  border-bottom-color: var(--on-fill);
+}
+.hero--photo .figure__caption { color: #D9D4EC; }
+/* The outline button is the one element here that is genuinely transparent, so
+   its legibility depends on whichever part of the photograph it lands on. It
+   measured 4.46:1 over the driveway at 1440 and, once it went full width at
+   390, 2.12:1 where it crosses the white flank of the van.
+
+   0.90 is not a taste. The brightest thing a photograph can put behind this
+   button is near-white, luminance about 0.98, and relative luminance composites
+   linearly, so holding 4.5:1 against white text needs the backdrop at or below
+   0.183.
+
+   0.85 was the computed answer and it was too close. Predicted backdrop 0.152;
+   MEASURED 0.175 at 390, which is 4.67:1 against a 4.5 minimum, four percent
+   of margin on a value the next photograph would move. The model is optimistic
+   by about 15 percent, so the tint is set from the measurement rather than
+   from the arithmetic: 0.90 measures comfortably clear and still reads as an
+   outline button rather than a second filled one. */
+.hero--photo .btn--outline-dark {
+  border-color: var(--on-fill);
+  color: var(--on-fill);
+  background: rgba(10, 6, 28, 0.90);
+}
+.hero--photo .btn--outline-dark:hover {
+  background: var(--on-fill);
+  color: var(--ink);
+}
+
+/* ── The editorial split, the shape most of the site uses ── */
+/* The photo takes the evidence column and the 60s figure sits under its
+   caption, because both are evidence and the figure is the strongest
+   claim on the site. Putting the photo here instead of replacing it
+   would have cost more than the photo gains.
+
+   No edge bleed. Bleeding a grid COLUMN to the viewport edge needs the
+   container width, not the column width, so every one-line version of
+   that trick is wrong by the gutter. The photo already takes half the
+   viewport; the bleed was dropped on purpose rather than approximated. */
+.hero--split .hero__media { margin-bottom: var(--sp-8); }
+.photo--hero-split { aspect-ratio: 16 / 10; }
+.photo--hero-split img { aspect-ratio: 16 / 10; }
+
+/* ── The full plate, used once, on the about header ──────── */
+.photo--plate { aspect-ratio: 21 / 9; }
+.photo--plate img { aspect-ratio: 21 / 9; }
+.plate-band {
+  margin-top: var(--sp-12);
+  background: var(--bg-2);
+  padding-bottom: var(--sp-6);
+}
+.plate-band .photo__caption {
+  max-width: var(--container-max);
+  margin-inline: auto;
+  padding-inline: var(--container-pad);
+}
+
+/* ── In-page section photos ──────────────────────────────── */
+.section__media { margin-top: var(--sp-10); }
+.photo--inline { aspect-ratio: 4 / 3; }
+.photo--inline img { aspect-ratio: 4 / 3; }
+
+/* ── The founder ─────────────────────────────────────────── */
+/* The portrait and the line it belongs to are one unit. Left as two blocks
+   they stacked, which read as a photograph dropped into a page rather than
+   somebody introduced. */
+.founder {
+  display: grid;
+  gap: var(--sp-5);
+  margin-block: var(--sp-8) var(--sp-10);
+}
+.founder__line {
+  color: var(--muted);
+  max-width: 54ch;
+}
+
+.photo--portrait { width: 160px; }
+.photo--portrait img { aspect-ratio: 4 / 5; }
+.photo--portrait .photo__caption {
+  max-width: none;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+/* Desktop only. A min-width block cannot reach a phone whatever the
+   source order, which is the lesson from the two mobile grids that
+   equal specificity and a later rule already beat on this site. */
+@media (min-width: 961px) {
+  .hero--photo {
+    min-height: 34rem;
+    padding-top: calc(var(--nav-height) + var(--sp-24));
+    padding-bottom: var(--sp-24);
+  }
+
+  /* Taller on a wide screen, where a 16:10 beside a column of type leaves
+     the evidence column short. */
+  .hero--split .photo--hero-split,
+  .hero--split .photo--hero-split img { aspect-ratio: 5 / 4; }
+
+  .photo--portrait { width: 220px; }
+  .founder {
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: start;
+    column-gap: var(--sp-10);
+  }
+
+  /* An in-page photo sits beside the prose it belongs to, not under it.
+     Scoped to .split--photo: a photo placed under a heading inside an
+     ordinary .split still wants its top margin. */
+  .split--photo .section__media { margin-top: 0; }
+  .split--photo {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    column-gap: var(--sp-16);
+    align-items: start;
+  }
+  .split--photo--flip .section__media { order: -1; }
+}
 /* ── Marquee ─────────────────────────────────────────────── */
 /* ── Problem Section ─────────────────────────────────────── */
 /* 3 stats in a row */

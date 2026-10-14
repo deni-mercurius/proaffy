@@ -24,6 +24,7 @@ Run:  python _tools/chrome.py          rewrite in place
 """
 import hashlib
 import io
+import json
 import os
 import sys
 
@@ -163,13 +164,43 @@ def footer_block():
   </footer>"""
 
 
-def assets_block(css_v, js_v, fonts_v):
-    """The 8-line invariant block. Fonts are local: nothing here leaves the origin.
+def hero_preload(name):
+    """The one line that tells the browser about the page's LCP image early.
+
+    A hero inside <picture> is not discoverable until the parser reaches it,
+    which on a photograph-led page is the whole largest-contentful-paint story.
+    The AVIF srcset is preloaded rather than a single file, so the browser still
+    picks the width it actually needs.
+
+    Returns "" for a page with no hero photograph, which is most of them.
+    """
+    man = os.path.join(ROOT, "assets", "photos", "manifest.json")
+    if not os.path.isfile(man):
+        return ""
+    try:
+        data = json.loads(io.open(man, encoding="utf-8").read())
+    except ValueError:
+        return ""
+    for _region, entry in data.items():
+        if entry.get("page") != name or not entry.get("lcp"):
+            continue
+        srcset = ", ".join(f"/assets/photos/{f['name']} {f['width']}w"
+                           for f in entry["files"] if f["fmt"] == "avif")
+        return ('\n  <link rel="preload" as="image" type="image/avif" '
+                f'imagesrcset="{srcset}" imagesizes="{entry["sizes"]}" />')
+    return ""
+
+
+def assets_block(css_v, js_v, fonts_v, name=None):
+    """The invariant block. Fonts are local: nothing here leaves the origin.
 
     Only the two sans weights are preloaded. Mono is below the fold on every page
     and preloading four faces would make them compete with the stylesheet for the
     first round trip. crossorigin is required on a font preload even same-origin,
     because fonts are always fetched in CORS mode.
+
+    The hero image preload is the one per-page line in here, and it is appended
+    last so it never competes with the stylesheet for the first round trip.
     """
     return f"""  <link rel="icon" type="image/png" sizes="32x32" href="assets/images/favicon-32.png" />
   <link rel="apple-touch-icon" sizes="180x180" href="assets/images/apple-touch-icon.png" />
@@ -178,7 +209,7 @@ def assets_block(css_v, js_v, fonts_v):
   <link rel="preload" as="font" type="font/woff2" href="assets/fonts/ibm-plex-sans-600.woff2" crossorigin />
   <link rel="stylesheet" href="assets/css/fonts.css?v={fonts_v}" />
   <link rel="stylesheet" href="assets/css/styles.css?v={css_v}" />
-  <script defer src="assets/js/main.js?v={js_v}"></script>"""
+  <script defer src="assets/js/main.js?v={js_v}"></script>{hero_preload(name)}"""
 
 
 # The closing block used to be byte-identical on seven pages, so seven pages
@@ -383,8 +414,9 @@ def main():
     js_v = version(os.path.join(ROOT, "assets", "js", "main.js"))
     fonts_v = version(os.path.join(ROOT, "assets", "css", "fonts.css"))
 
-    bodies = {"footer": footer_block(),
-              "assets": assets_block(css_v, js_v, fonts_v)}
+    # The assets block stopped being page-invariant when the hero preload
+    # joined it, so it is built inside the loop below rather than here.
+    bodies = {"footer": footer_block()}
 
     stale, written, problems = [], [], []
 
@@ -402,6 +434,8 @@ def main():
                 body = nav_block(ACTIVE.get(name))
             elif region == "cta":
                 body = cta_block(name)
+            elif region == "assets":
+                body = assets_block(css_v, js_v, fonts_v, name)
             else:
                 body = bodies[region]
             result = apply_region(out, region, body)
