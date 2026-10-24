@@ -74,9 +74,13 @@ jobs:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: |
-          if [ -z "$CLOUDFLARE_API_TOKEN" ] || [ -z "$CLOUDFLARE_ACCOUNT_ID" ]; then
-            echo "::error::CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID are not set."
-            echo "Add them under Settings > Secrets and variables > Actions."
+          if [ -z "$CLOUDFLARE_API_TOKEN" ]; then
+            echo "::error::CLOUDFLARE_API_TOKEN is not set."
+            echo "Add it under Settings > Secrets and variables > Actions."
             exit 1
           fi
+          # CLOUDFLARE_ACCOUNT_ID is optional. A token scoped to exactly one account, which this
+          # one is, lets wrangler resolve the account by itself through Account Settings: Read.
+          # Set the secret only if the token is ever widened to more than one account, because
+          # then wrangler cannot guess which is meant and says so.
           npx --yes wrangler@4 deploy
