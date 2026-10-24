@@ -68,6 +68,16 @@ jobs:
 
       # Only after the gates, only on main, and never on a pull request from a fork, which cannot
       # see the secrets anyway.
+      # There are two ways this site can reach Cloudflare and only one of them belongs here.
+      #
+      #   Workers Builds   Cloudflare watches this repo and deploys it itself. No token, no secret,
+      #                    one authorisation in the dashboard. If that is connected, this step is
+      #                    not wanted and skips.
+      #   This step        deploys with a token held as a repository secret.
+      #
+      # So a missing secret SKIPS rather than fails: an absent token means the other route is in
+      # use, which is a choice, not a fault. The gates above run either way, which is the part that
+      # matters, because Workers Builds will happily publish a broken page and never ask.
       - name: Deploy to Cloudflare
         if: github.event_name != 'pull_request'
         env:
@@ -75,9 +85,10 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: |
           if [ -z "$CLOUDFLARE_API_TOKEN" ]; then
-            echo "::error::CLOUDFLARE_API_TOKEN is not set."
-            echo "Add it under Settings > Secrets and variables > Actions."
-            exit 1
+            echo "No CLOUDFLARE_API_TOKEN: skipping the deploy."
+            echo "Either Workers Builds is connected and owns the deploy, or nothing does."
+            echo "Check: curl -s https://proaffy.com/ | grep -c ibm-plex-sans-cond-600"
+            exit 0
           fi
           # CLOUDFLARE_ACCOUNT_ID is optional. A token scoped to exactly one account, which this
           # one is, lets wrangler resolve the account by itself through Account Settings: Read.
