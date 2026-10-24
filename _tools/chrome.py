@@ -219,10 +219,24 @@ def hero_preload(name):
 def assets_block(css_v, js_v, fonts_v, name=None):
     """The invariant block. Fonts are local: nothing here leaves the origin.
 
-    Only the two sans weights are preloaded. Mono is below the fold on every page
-    and preloading four faces would make them compete with the stylesheet for the
-    first round trip. crossorigin is required on a font preload even same-origin,
-    because fonts are always fetched in CORS mode.
+    All three faces are preloaded. This said two, and gave a reason that stopped
+    being true: the third face was the mono, which was below the fold, and the
+    mono is gone. What is here now is the condensed cut, and it sets every h1,
+    which is the largest thing above the fold on every page.
+
+    Measured on the live site before adding it, because a preload that is not
+    needed costs a round trip:
+
+        fast       400/600 done at 815ms, FCP 880ms, condensed done at 951ms
+        slow       400/600 start 794ms, condensed starts 2634ms, FCP 2676ms
+
+    Unpreloaded, the condensed face is not discovered until fonts.css has been
+    parsed, so it starts 175ms behind the other two on a fast line and 1840ms
+    behind on a slow one. That is the headline swapping last, and on a slow
+    connection nearly a second after the paragraph under it.
+
+    crossorigin is required on a font preload even same-origin, because fonts
+    are always fetched in CORS mode.
 
     The hero image preload is the one per-page line in here, and it is appended
     last so it never competes with the stylesheet for the first round trip.
@@ -232,6 +246,7 @@ def assets_block(css_v, js_v, fonts_v, name=None):
   <link rel="manifest" href="site.webmanifest" />
   <link rel="preload" as="font" type="font/woff2" href="assets/fonts/ibm-plex-sans-400.woff2" crossorigin />
   <link rel="preload" as="font" type="font/woff2" href="assets/fonts/ibm-plex-sans-600.woff2" crossorigin />
+  <link rel="preload" as="font" type="font/woff2" href="assets/fonts/ibm-plex-sans-cond-600.woff2" crossorigin />
   <link rel="stylesheet" href="assets/css/fonts.css?v={fonts_v}" />
   <link rel="stylesheet" href="assets/css/styles.css?v={css_v}" />
   <script defer src="assets/js/main.js?v={js_v}"></script>{hero_preload(name)}"""
