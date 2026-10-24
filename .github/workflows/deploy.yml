@@ -1,0 +1,77 @@
+# Gates, then deploy to Cloudflare. Runs on every push to main.
+#
+# This exists because there was no CI at all and the site was deployed by hand, so proaffy.com sat
+# behind main for as long as nobody remembered to run wrangler. Exactly the same gap left the dental
+# site two days stale in October 2026.
+#
+# The gates run FIRST and the deploy only runs if they pass, so a broken page cannot reach the live
+# site just because someone pushed.
+#
+# wrangler is called directly rather than through a third-party action: the deploy needs a
+# Cloudflare token, and the fewer things that token passes through, the better.
+#
+# Two repository secrets are required, both for ProAffy's OWN Cloudflare account, which is not the
+# agency account:
+#   CLOUDFLARE_API_TOKEN    a token with the "Edit Cloudflare Workers" template
+#   CLOUDFLARE_ACCOUNT_ID   the account id that owns the `proaffy` worker
+#
+# Not run here, and why:
+#   _tools/photos.py --check   needs the 18.6 MB of masters in _src/photos/, which .gitignore and
+#                              .assetsignore both exclude, so it can only run on a machine that has
+#                              them. It stays a local check before pushing.
+name: deploy
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # Every gate below is read-only and stdlib only: no pip install step is needed.
+      - name: Page gate
+        run: python _tools/verify.py
+
+      - name: Contrast
+        run: python _tools/contrast.py
+
+      - name: fonts.css matches the shipped binaries
+        run: python _tools/fonts.py --check
+
+      - name: Repeated chrome matches its template
+        run: python _tools/chrome.py --check
+
+      - name: Sitemap is current
+        run: python _tools/sitemap.py --check
+
+      # Only after the gates, only on main, and never on a pull request from a fork, which cannot
+      # see the secrets anyway.
+      - name: Deploy to Cloudflare
+        if: github.event_name != 'pull_request'
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          if [ -z "$CLOUDFLARE_API_TOKEN" ] || [ -z "$CLOUDFLARE_ACCOUNT_ID" ]; then
+            echo "::error::CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID are not set."
+            echo "Add them under Settings > Secrets and variables > Actions."
+            exit 1
+          fi
+          npx --yes wrangler@4 deploy
