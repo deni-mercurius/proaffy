@@ -21,3 +21,7 @@ desktop.ini
 
 # Derived from the woff2 by _tools/make-og.py, not shipped.
 assets/fonts/*.ttf
+
+# wrangler writes an account cache into whatever folder it runs in. It is local state and
+# must never be published: the same cache was served publicly on another project in 2026-09.
+.wrangler/

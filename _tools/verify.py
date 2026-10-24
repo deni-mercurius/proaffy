@@ -1,4 +1,8 @@
-"""ProAffy site gate. Read-only, stdlib only.
+"""ProAffy site gate. Read-only, but NOT stdlib only.
+
+It says stdlib only until 2026-10-24 and that was wrong: this imports photos.py,
+which needs Pillow. The claim held right up until the first machine without it
+ran this, which was CI on the day it was added. See _tools/requirements.txt.
 
 Every check is numbered and prints PASS or FAIL with the reason. Exit 1 on any
 failure. Some checks are expected to fail today: that is deliberate. A gate

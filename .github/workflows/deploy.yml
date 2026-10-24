@@ -45,7 +45,12 @@ jobs:
         with:
           python-version: "3.12"
 
-      # Every gate below is read-only and stdlib only: no pip install step is needed.
+      # NOT stdlib only, whatever verify.py's docstring says. It imports photos.py, which needs
+      # Pillow, and fonts.py measures woff2 through fontTools, which needs brotli to open one.
+      # CI found this the first time it ran, because locally those were already installed.
+      - name: Tooling
+        run: python -m pip install --disable-pip-version-check -r _tools/requirements.txt
+
       - name: Page gate
         run: python _tools/verify.py
 

@@ -1,0 +1,13 @@
+# What the tools in this folder need beyond the standard library.
+#
+# There was no manifest before, and _tools/verify.py's own docstring says "stdlib only", which is
+# not true: it imports photos.py, which needs Pillow. CI found that the first time it ran.
+#
+# Pillow     photos.py reads and grades the masters; verify.py imports it
+# fontTools  fonts.py measures the shipped woff2 to write the fallback descriptors
+# brotli     fontTools needs it to open a woff2 at all
+#
+# Floors are the versions this was last verified against, not ceilings.
+Pillow>=12.2.0
+fonttools>=4.62.1
+brotli>=1.2.0
