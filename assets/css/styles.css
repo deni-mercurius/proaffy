@@ -71,8 +71,18 @@
   --clr-text-on-dark:   var(--on-fill);
   --clr-text-muted-dark:var(--muted);
 
-  /* One face. The mono was the "horrible" number font and it is gone. */
+  /* One face, and the mono stays gone: it was the "horrible" number font.
+     The condensed cut is that same face narrowed, not a second look, and it
+     carries headings only. 400 and 600 of one width gave a heading almost the
+     same texture as the paragraph under it, which is what made the page read
+     flat. The products selling the same thing to the same trades all buy
+     display contrast somewhere: Hatch sets display in Instrument Sans
+     SemiCondensed beside the regular, ServiceTitan runs Nunito Sans up to
+     Black, Podium pairs its sans with DM Mono. This site bought none of it.
+     Condensed is the option that neither reopens the mono nor adds a family. */
   --font-sans: 'IBM Plex Sans', 'IBM Plex Sans Fallback', Arial, sans-serif;
+  --font-cond: 'IBM Plex Sans Condensed', 'IBM Plex Sans Condensed Fallback',
+               'IBM Plex Sans', Arial, sans-serif;
   --font-mono: var(--font-sans);
   --font-display: var(--font-sans);
   --font-accent:  var(--font-sans);
@@ -175,7 +185,9 @@ input, textarea, select { font-family: inherit; font-size: inherit; }
 .section--dark  { background: var(--bg-2); color: var(--ink); }
 
 /* ── Section Label ───────────────────────────────────────── */
-/* Small uppercase eyebrow. Mono, because it labels rather than asserts. */
+/* Small uppercase eyebrow. Stays in the regular width: the condensed cut is
+   for headings, and an eyebrow that narrows too stops being a label and starts
+   competing with the heading under it. */
 .section-label {
   font-family: var(--font-display);
   font-size: var(--fs-xs);
@@ -189,7 +201,7 @@ input, textarea, select { font-family: inherit; font-size: inherit; }
 
 /* ── Headings ────────────────────────────────────────────── */
 .h1 {
-  font-family: var(--font-accent);
+  font-family: var(--font-cond);
   font-size: clamp(var(--fs-3xl), 6vw, var(--fs-5xl));
   font-weight: 600;
   line-height: 1.1;
@@ -197,7 +209,7 @@ input, textarea, select { font-family: inherit; font-size: inherit; }
 }
 
 .h2 {
-  font-family: var(--font-accent);
+  font-family: var(--font-cond);
   font-size: clamp(var(--fs-2xl), 4vw, var(--fs-4xl));
   font-weight: 600;
   line-height: 1.15;
@@ -368,7 +380,7 @@ input, textarea, select { font-family: inherit; font-size: inherit; }
 }
 
 .hero__title {
-  font-family: var(--font-accent);
+  font-family: var(--font-cond);
   font-size: clamp(var(--fs-3xl), 7vw, 4.5rem);
   font-weight: 600;
   line-height: 1.1;
@@ -692,7 +704,7 @@ input, textarea, select { font-family: inherit; font-size: inherit; }
 }
 
 .service-block__title {
-  font-family: var(--font-accent);
+  font-family: var(--font-cond);
   font-size: clamp(var(--fs-xl), 3vw, var(--fs-2xl));
   font-weight: 600;
   color: var(--clr-text);
