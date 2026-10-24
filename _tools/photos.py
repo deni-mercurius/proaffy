@@ -124,8 +124,7 @@ SLOTS = [
     Slot("index-sequence", "message-kitchen.png", "inline", "inline", "index.html",
          "A pair of hands holding a phone in a dim kitchen, a message bubble "
          "lighting the screen.",
-         "A reply inside a minute still reads as a person rather than a "
-         "system."),
+         "A reply inside a minute still reads as a person."),
 
     Slot("index-operate", "office-calendar.png", "inline", "inline", "index.html",
          "An office manager at a desk looking at a week view on a monitor, "

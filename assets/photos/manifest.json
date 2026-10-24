@@ -102,7 +102,7 @@
     "sizes": "(min-width: 961px) 46vw, 100vw",
     "lcp": false,
     "alt": "A pair of hands holding a phone in a dim kitchen, a message bubble lighting the screen.",
-    "caption": "A reply inside a minute still reads as a person rather than a system.",
+    "caption": "A reply inside a minute still reads as a person.",
     "fallback": 800,
     "files": [
       {
