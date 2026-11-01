@@ -184,6 +184,7 @@ def footer_block():
       <div class="footer__legal">
         <p class="footer__copy">&copy; {YEAR} ProAffy</p>
         <p class="footer__copy">Figures on this site are models, not client results.</p>
+        <p class="footer__copy">Site by <a href="https://minarankstudio.com/" target="_blank" rel="noopener">minarank studio</a></p>
       </div>
     </div>
   </footer>"""

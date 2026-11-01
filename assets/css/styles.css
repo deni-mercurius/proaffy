@@ -1353,6 +1353,8 @@ input, textarea, select { font-family: inherit; font-size: inherit; }
   border-top: 1px solid var(--rule);
 }
 .footer__copy { font-size: var(--fs-xs); color: var(--muted); }
+.footer__copy a { text-decoration: underline; text-underline-offset: 3px; }
+.footer__copy a:hover { color: var(--violet); }
 
 @media (min-width: 961px) {
   .footer__link { padding-block: var(--sp-2); }
