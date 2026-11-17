@@ -39,7 +39,14 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
+      # The whole history, not the default single commit. sitemap.py and gate checks 31 and 32 date
+      # every page from `git log` on that page, and in a one-commit clone every file appears to have
+      # changed in HEAD. A commit touching no page at all then failed both checks with its own date,
+      # while the same gate passed on a full clone. It stayed hidden while HEAD's date happened to be
+      # the day the pages last changed.
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - uses: actions/setup-python@v5
         with:
