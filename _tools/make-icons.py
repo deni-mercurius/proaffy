@@ -2,7 +2,8 @@
 
 The master is 3508x3508 and was being served straight into a 68px nav slot on
 every page, which is 179 KB decoded at full resolution for a mark the size of a
-thumbnail. This writes the sizes the site actually uses.
+thumbnail. This writes the sizes the site actually uses, plus favicon.ico at the
+site root.
 
 Run:  python _tools/make-icons.py
 """
@@ -27,6 +28,12 @@ RENDITIONS = {
     "icon-512.png": 512,
 }
 
+# Browsers and crawlers request /favicon.ico whatever the <link rel="icon"> says,
+# and without it the site answered 404. So it sits at the root, not under
+# assets/images/, with three frames reduced straight from the master like the PNGs.
+ICO = os.path.join(ROOT, "favicon.ico")
+ICO_SIZES = [(16, 16), (32, 32), (48, 48)]
+
 
 def main():
     if not os.path.isfile(MASTER):
@@ -48,7 +55,12 @@ def main():
         total += kb
         print(f"  {name:24} {size:>4}px  {kb:6.1f} KB")
 
-    print(f"\n{len(RENDITIONS)} renditions, {total:.0f} KB total")
+    master.save(ICO, sizes=ICO_SIZES)
+    kb = os.path.getsize(ICO) / 1024
+    total += kb
+    print(f"  {'favicon.ico (root)':24} 16-48px  {kb:6.1f} KB")
+
+    print(f"\n{len(RENDITIONS) + 1} renditions, {total:.0f} KB total")
 
 
 if __name__ == "__main__":
